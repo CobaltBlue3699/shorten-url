@@ -12,13 +12,13 @@
     "test": "nx test frontend && nx test backend && echo 'testing complete!'",
     "lint": "nx lint frontend --fix && nx lint frontend-e2e --fix && nx lint backend --fix && nx lint backend-e2e --fix && echo 'lint completed!'",
     "format": "prettier --write \"apps/frontend/src/**/*.ts\" \"apps/frontend-e2e/src/**/*.ts\" \"apps/backend/src/**/*.ts\" \"apps/backend-e2e/src/**/*.ts\"",
-    "release:prerelease": "npm version prerelease && npm publish",
-    "release:prepatch": "npm version prepatch && npm publish",
-    "release:patch": "npm version patch && npm publish",
-    "release:preminor": "npm version preminor && npm publish",
-    "release:minor": "npm version minor && npm publish",
-    "release:premajor": "npm version premajor && npm publish",
-    "release:major": "npm version major && npm publish"
+    "release:prerelease": "npm version prerelease && echo 'waiting for ci commands'",
+    "release:prepatch": "npm version prepatch && echo 'waiting for ci commands'",
+    "release:patch": "npm version patch && echo 'waiting for ci commands'",
+    "release:preminor": "npm version preminor && echo 'waiting for ci commands'",
+    "release:minor": "npm version minor && echo 'waiting for ci commands'",
+    "release:premajor": "npm version premajor && echo 'waiting for ci commands'",
+    "release:major": "npm version major && echo 'waiting for ci commands'"
   },
   "private": true,
   "devDependencies": {
