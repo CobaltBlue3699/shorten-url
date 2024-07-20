@@ -14,6 +14,8 @@ module.exports = {
       assets: ['./src/assets'],
       optimization: false,
       outputHashing: 'none',
+      // trying to fix the debug issue, details: https://github.com/nrwl/nx/issues/14708
+      sourceMap: true,
     }),
   ],
 };
