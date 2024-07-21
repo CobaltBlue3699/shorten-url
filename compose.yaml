@@ -1,0 +1,100 @@
+version: '3.6'
+
+services:
+  auth_service:
+    build: ./apps/keycloak
+    container_name: auth_service
+    volumes:
+      - './apps/keycloak/themes:/opt/keycloak/themes/my-theme'
+    environment:
+      KC_HOSTNAME_STRICT: false
+      KC_HOSTNAME_STRICT_HTTPS: false
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KEYCLOAK_USER: admin
+      KEYCLOAK_PASSWORD: admin
+      KC_DB_USERNAME: keycloak
+      KC_DB_PASSWORD: password
+      KC_HEALTH_ENABLED: true
+      KC_METRICS_ENABLED: true
+      KC_HOSTNAME: localhost
+      PROXY_ADDRESS_FORWARDING: true
+
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak
+      KC_LOG_LEVEL: info
+
+    # command: -v start --optimized
+    command: start-dev
+    depends_on:
+      - postgres
+    ports:
+      # http
+      - 8080:8080
+      # https
+      - 8443:8443
+      # healthckeck
+      - 9000:9000
+
+  postgres:
+    image: postgres:16.3
+    container_name: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: password
+
+  # nestjs as backend
+  # debug mode is not working between docker and nx, checkout this in the feature.
+  # issue: https://github.com/nrwl/nx/issues/14126
+  # nestjs:
+  #   extends:
+  #     file: compose.base.yaml
+  #     service: nx-app-base
+  #   command: npm run start:b
+  #   depends_on:
+  #     - postgres
+  #   ports:
+  #     - 3000:3000
+  #     - 9229:9229
+  #   develop:
+  #     watch:
+  #       - action: sync
+  #         path: ./apps/backend
+  #         target: /app/apps/backend
+  #         ignore:
+  #           - node_modules/
+  #       - action: rebuild
+  #         path: ./package.json
+  #         target: /app/package.json
+  #       - action: sync+restart
+  #         path: ./apps/backend/webpack.config.js
+  #         target: /app/apps/backend/webpack.config.js
+
+  # angular as frontend
+  # angular:
+  #   extends:
+  #     file: compose.base.yaml
+  #     service: nx-app-base
+  #   command: npm run start:f
+  #   ports:
+  #     - 4200:4200
+  #   develop:
+  #     watch:
+  #       - action: sync
+  #         path: ./apps/frontend
+  #         target: /app/apps/frontend
+  #         ignore:
+  #           - node_modules/
+  #       - action: rebuild
+  #         path: ./package.json
+  #         target: /app/package.json
+
+volumes:
+  postgres_data:
+    driver: local
+
+
+
