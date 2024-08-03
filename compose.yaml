@@ -1,5 +1,15 @@
 version: '3.6'
 
+x-logging: &logging
+  driver: "json-file"
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+networks:
+  replication_network:
+    driver: bridge
+
 services:
   auth_service:
     build: ./apps/keycloak
@@ -9,23 +19,30 @@ services:
     environment:
       KC_HOSTNAME_STRICT: false
       KC_HOSTNAME_STRICT_HTTPS: false
-      KEYCLOAK_ADMIN: admin
-      KEYCLOAK_ADMIN_PASSWORD: admin
-      KEYCLOAK_USER: admin
-      KEYCLOAK_PASSWORD: admin
-      KC_DB_USERNAME: keycloak
-      KC_DB_PASSWORD: password
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+      KEYCLOAK_USER: ${KEYCLOAK_ADMIN}
+      KEYCLOAK_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+      KC_DB_USERNAME: ${POSTGRES_USER}
+      KC_DB_PASSWORD: ${POSTGRES_PASSWORD}
       KC_HEALTH_ENABLED: true
       KC_METRICS_ENABLED: true
-      KC_HOSTNAME: localhost
+      KC_HOSTNAME: ${KC_HOSTNAME}
       PROXY_ADDRESS_FORWARDING: true
+
+      GF_URL: ${GF_HOSTNAME}:${GF_SERVER_HTTP_PORT}
+      GF_ADMIN_USERNAME: ${GF_ADMIN_USERNAME}
+      GF_ADMIN_PASSWORD: ${GF_ADMIN_PASSWORD}
 
       KC_DB: postgres
       KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak
-      KC_LOG_LEVEL: info
+      KC_LOG_LEVEL: ${KC_LOG_LEVEL}
+    logging: *logging
+    networks:
+      replication_network:
 
     # command: -v start --optimized
-    command: start-dev
+    command: ["start-dev", "--import-realm"]
     depends_on:
       - postgres
     ports:
@@ -43,8 +60,10 @@ services:
       - postgres_data:/var/lib/postgresql/data
     environment:
       POSTGRES_DB: keycloak
-      POSTGRES_USER: keycloak
-      POSTGRES_PASSWORD: password
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    networks:
+      replication_network:
 
   # nestjs as backend
   # debug mode is not working between docker and nx, checkout this in the feature.

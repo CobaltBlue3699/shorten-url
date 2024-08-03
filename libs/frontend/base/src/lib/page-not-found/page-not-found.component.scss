@@ -1,0 +1,56 @@
+$svg: 90px;
+$primary-color: #547CFF;
+$shadow: rgba(0,0,0,0.08);
+@mixin svg-size {
+  height: $svg;
+  width: $svg;
+}
+
+body {
+  font-family: "Noto Sans HK", sans-serif;
+  color: #555;
+}
+
+#PageNotFound {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100vh;
+  .error {
+    text-align: center;
+    width: 500px;
+    margin: auto;
+    .emotion {
+      margin-bottom: .75rem;
+      svg {
+        @include svg-size;
+      }
+    }
+    h1 {
+      margin-top: 0;
+    }
+    p {
+      font-size: 20px;
+    }
+    .go-back {
+      display: block;
+      margin-top: 3rem;
+      .button {
+        text-decoration: none;
+        background-color: $primary-color;
+        color: #fbfbfb;
+        padding: .75rem 2rem;
+        border-radius: 3px;
+        box-shadow: 0 4px 10px -1 $shadow;
+
+        svg {
+          height: 17px;
+          width: 17px;
+          vertical-align: middle;
+          margin-right: .5em;
+        }
+      }
+    }
+  }
+}
