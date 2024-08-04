@@ -12,7 +12,7 @@
     "test": "npx nx test frontend && nx test backend && echo 'testing complete!'",
     "e2e:f": "nx e2e frontend-e2e",
     "e2e:b": "nx e2e backend-e2e",
-    "start:f": "npx nx serve frontend --host=0.0.0.0 --disable-host-check",
+    "start:f": "npx nx build frontend --watch",
     "start:b": "set NODE_TLS_REJECT_UNAUTHORIZED=0&& npx nx serve backend --watch --host=0.0.0.0",
     "lint": "nx lint frontend --fix && nx lint frontend-e2e --fix && nx lint backend --fix && nx lint backend-e2e && nx lint keycloak-connect && nx lint base --fix && echo 'lint completed!'",
     "format": "prettier --write \"apps/frontend/src/**/*.ts\" \"apps/frontend-e2e/src/**/*.ts\" \"apps/backend/src/**/*.ts\" \"apps/backend-e2e/src/**/*.ts\" \"libs/backend/**/src/**/*.ts\" \"libs/frontend/**/src/**/*.ts\"",

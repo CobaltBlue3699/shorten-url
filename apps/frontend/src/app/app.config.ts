@@ -5,6 +5,8 @@ import {
   withHashLocation,
 } from '@angular/router';
 import { appRoutes } from './app.routes';
+import { provideHttpClient, withInterceptors, withInterceptorsFromDi } from '@angular/common/http';
+import { httpErrorInterceptor } from './intercepters/http-error.intercepter';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -14,5 +16,9 @@ export const appConfig: ApplicationConfig = {
       // withComponentInputBinding(),
       withHashLocation()
     ),
+    provideHttpClient(
+      withInterceptors([httpErrorInterceptor]),
+      // withInterceptorsFromDi()
+    )
   ],
 };

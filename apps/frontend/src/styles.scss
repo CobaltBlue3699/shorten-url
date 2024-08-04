@@ -1,4 +1,14 @@
 /* You can add global styles to this file, and also import other style files */
+@import url(https://fonts.googleapis.com/css?family=Roboto:300);
+// Your custom styles
+html, body { height: 100%; margin: 0;
+  overflow: hidden;}
+body {
+  margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif;
+  background-image: url("../public/assets/img/background.png");
+  background-size: cover;
+}
+
 .shadow {
   box-shadow: 0 0 #0000, 0 0 #0000, 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
@@ -7,4 +17,18 @@
   border-radius: 1.5rem;
 }
 
-html, body {margin: 0; height: 100%; overflow: hidden}
+.hidden {
+  display: none;
+}
+
+.w-full {
+  width: 100%;
+}
+
+.h-full {
+  height: 100%;
+}
+
+ul li {
+  list-style-type: none;
+}

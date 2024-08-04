@@ -73,7 +73,8 @@ export class AuthService {
   }
 
   async logout(refreshToken: string) {
-    await this.keycloakService.logout(refreshToken).catch(() => {
+    return await this.keycloakService.logout(refreshToken).catch((e) => {
+      // console.log(e)
       throw new UnauthorizedException();
     });
   }

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Req, Res, Post, Inject } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Req, Res, Post, Inject, Query, Optional } from '@nestjs/common';
 // import { Request, Response } from 'express';
 import { Public } from '../decorators/public.decorator';
 import { KEYCLOAK_CONNECT_OPTIONS, KEYCLOAK_COOKIE_DEFAULT, KEYCLOAK_REFRESH_COOKIE_DEFAULT } from '../constants';
@@ -21,10 +21,17 @@ type LogoutRequestBody = {
 
 @Controller(`/auth`)
 export class KeycloakController {
+
+  private cookieKey: string;
+  private refreshKey: string;
+
   constructor(
     @Inject(KEYCLOAK_CONNECT_OPTIONS) private opts: KeycloakConnectOptions,
     private readonly authService: AuthService
-  ) {}
+  ) {
+    this.cookieKey = this.opts.cookieKey || KEYCLOAK_COOKIE_DEFAULT;
+    this.refreshKey = this.opts.refreshCookieKey || KEYCLOAK_REFRESH_COOKIE_DEFAULT;
+  }
 
   // @Post('/login')
   // @HttpCode(HttpStatus.OK)
@@ -73,18 +80,22 @@ export class KeycloakController {
   @Public()
   @Get('/code')
   @HttpCode(HttpStatus.OK)
-  async code(@Req() req: any, @Res() res: any) {
-    const { code } = req.query;
+  async code(
+    @Req() req: any,
+    @Res() res: any,
+    @Query('code') code: string,
+    @Optional()
+    @Query('state') state: string
+  ) {
     const { host } = req.headers;
     const redirectURL = `${req.protocol}://${host}${req.path}`;
     const resp = await this.authService.codeExchangeToken(code as string, redirectURL);
-    const cookieKey = this.opts.cookieKey || KEYCLOAK_COOKIE_DEFAULT;
-    const refreshKey = this.opts.refreshCookieKey || KEYCLOAK_REFRESH_COOKIE_DEFAULT;
-    res.cookie(cookieKey, `${resp.access_token}`, {
+
+    res.cookie(this.cookieKey, `${resp.access_token}`, {
       httpOnly: true,
       secure: process.env['NODE_ENV'] === 'production',
     });
-    res.cookie(refreshKey, `${resp.refresh_token}`, {
+    res.cookie(this.refreshKey, `${resp.refresh_token}`, {
       httpOnly: true,
       secure: process.env['NODE_ENV'] === 'production',
     });
@@ -102,9 +113,14 @@ export class KeycloakController {
 
   @Post('/logout')
   @HttpCode(HttpStatus.OK)
-  async logout(@Body() body: LogoutRequestBody) {
-    const { refresh_token: refreshToken } = body;
-
-    await this.authService.logout(refreshToken);
+  async logout(@Req() req: any, @Res() res: any) {
+    const { refreshTokenJWT } = req;
+    res.clearCookie(this.cookieKey);
+    res.clearCookie(this.refreshKey);
+    await this.authService.logout(refreshTokenJWT);
+    res.json({
+      status: 200,
+      message: 'logout!'
+    })
   }
 }

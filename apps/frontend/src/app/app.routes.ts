@@ -1,26 +1,20 @@
 import { Route } from '@angular/router';
 
+
 export const appRoutes: Route[] = [
   {
-    path: `login`,
-    // lazy loading
-    loadComponent: async () => {
-      const m = await import(`./login/login.component`);
-      return m.LoginComponent;
+    path: 'dashboard',
+    loadComponent: () => import('./dashboard/dashboard.component').then((mod) => mod.DashboardComponent),
+    data: {
+      // showHeader: false,
+      showSidebar: false,
+      showFooter: false,
     },
   },
   {
     path: ``,
-    loadComponent: async () => {
-      const m = await import(`./nx-welcome.component`);
-      return m.NxWelcomeComponent;
-    },
+    pathMatch: 'full',
+    redirectTo: '/dashboard'
   },
-  {
-    path: `**`,
-    loadComponent: async () => {
-      const m = await import('@shorten-url/base');
-      return m.PageNotFoundComponent;
-    },
-  },
+  { path: '**', redirectTo: '' },
 ];
