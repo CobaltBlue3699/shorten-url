@@ -6,29 +6,29 @@ import { Public, RoleMatchingMode, Roles } from '@shorten-url/keycloak-connect';
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+  // constructor(private readonly appService: AppService) {}
 
-  @Public()
-  @Get('/hello')
-  hello() {
-    return `hello`;
-  }
+  // @Public()
+  // @Get('/hello')
+  // hello() {
+  //   return `hello`;
+  // }
 
-  @Get(`/admin`)
-  @Roles({
-    roles: [Role.Admin],
-    mode: RoleMatchingMode.ANY,
-  })
-  admin() {
-    return `admin`;
-  }
+  // @Get(`/admin`)
+  // @Roles({
+  //   roles: [Role.Admin],
+  //   mode: RoleMatchingMode.ANY,
+  // })
+  // admin() {
+  //   return `admin`;
+  // }
 
-  @Get(`/user`)
-  @Roles({
-    roles: [Role.Admin, Role.User],
-    mode: RoleMatchingMode.ANY,
-  })
-  user() {
-    return `user`;
-  }
+  // @Get(`/user`)
+  // @Roles({
+  //   roles: [Role.Admin, Role.User],
+  //   mode: RoleMatchingMode.ANY,
+  // })
+  // user() {
+  //   return `user`;
+  // }
 }

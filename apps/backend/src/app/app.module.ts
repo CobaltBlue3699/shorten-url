@@ -15,6 +15,7 @@ import {
   UnauthorizedFilter,
 } from '@shorten-url/keycloak-connect';
 import { CoreModule } from './core/core.module';
+import { ShortenUrlModule } from './shorten-url/shorten-url.module';
 
 console.log(__dirname);
 @Module({
@@ -38,6 +39,7 @@ console.log(__dirname);
         };
       },
     }),
+    ShortenUrlModule,
   ],
   controllers: [AppController],
   providers: [
