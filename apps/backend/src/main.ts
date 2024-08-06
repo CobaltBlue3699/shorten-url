@@ -8,6 +8,7 @@ import { NestFactory } from '@nestjs/core';
 
 import { AppModule } from './app/app.module';
 import cookieParser from 'cookie-parser';
+import helmet from 'helmet';
 
 // if (process.env.NODE_ENV != 'production') {
 //   // keycloak connect library didn't procide a way to pass https Agent during api interaction
@@ -18,12 +19,13 @@ import cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  const globalPrefix = 'api';
-  app.setGlobalPrefix(globalPrefix);
+  // const globalPrefix = 'api';
+  // app.setGlobalPrefix(globalPrefix);
+  // app.use(helmet());
   app.use(cookieParser());
   const port = process.env.PORT || 3000;
   await app.listen(port);
-  Logger.log(`🚀 Application is running on: http://localhost:${port}/${globalPrefix}`);
+  Logger.log(`🚀 Application is running on: http://localhost:${port}/`); //${globalPrefix}
 }
 
 bootstrap();

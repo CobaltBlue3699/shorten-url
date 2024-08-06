@@ -7,7 +7,7 @@ export function httpErrorInterceptor(req: HttpRequest<unknown>, next: HttpHandle
   return next(newReq).pipe(
     catchError(err => {
       if (err.status === 401) {
-        location.href = '/api/auth/login'
+        location.href = '/auth/login'
       }
       throw err;
     })

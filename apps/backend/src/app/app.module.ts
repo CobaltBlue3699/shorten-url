@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+// import { AppController } from './app.controller';
+// import { AppService } from './app.service';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { APP_FILTER, APP_GUARD } from '@nestjs/core';
@@ -16,6 +16,7 @@ import {
 } from '@shorten-url/keycloak-connect';
 import { CoreModule } from './core/core.module';
 import { ShortenUrlModule } from './shorten-url/shorten-url.module';
+import { MongooseModule } from '@nestjs/mongoose';
 
 console.log(__dirname);
 @Module({
@@ -39,11 +40,25 @@ console.log(__dirname);
         };
       },
     }),
+    MongooseModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => {
+        console.log(configService.get('MONGODB_URL'))
+        return {
+          uri: configService.get('MONGODB_URL'),
+          user: configService.get('MONGODB_USER'),
+          pass: configService.get('MONGODB_PASSWORD'),
+          retryAttempts: configService.get('MONGODB_RETRY_ATTEMPTS'),
+          retryDelay: configService.get('MONGODB_RETRY_DELAY'),
+        }
+      }
+    }),
     ShortenUrlModule,
   ],
-  controllers: [AppController],
+  controllers: [],
   providers: [
-    AppService,
+    // AppService,
     // KeycloakService,
     {
       provide: APP_GUARD,

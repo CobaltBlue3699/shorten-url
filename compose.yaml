@@ -65,6 +65,18 @@ services:
     networks:
       replication_network:
 
+  mongo:
+    image: mongo:latest
+    container_name: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGODB_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGODB_PASSWORD}
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
   # nestjs as backend
   # debug mode is not working between docker and nx, checkout this in the feature.
   # issue: https://github.com/nrwl/nx/issues/14126
@@ -112,6 +124,8 @@ services:
   #         target: /app/package.json
 
 volumes:
+  mongo-data:
+    driver: local
   postgres_data:
     driver: local
 

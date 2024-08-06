@@ -1,9 +1,23 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 
-export type ShortenUrlRequest = {
-  url: string;
+export type ShortenUrl = {
+  createdAt: string,
+  description: string,
+  image: string,
+  originalUrl: string,
+  shortUrl: string,
+  title: string,
+  updatedAt: string,
+  usageCount: number,
+  userId: string,
+  __v: number
+  _id: string
 }
+
+export type ShortenUrlRequest = Pick<ShortenUrl, 'originalUrl'>;
+
 
 @Injectable({
   providedIn: 'root'
@@ -12,14 +26,16 @@ export class ShortenUrlService {
 
   http = inject(HttpClient);
 
-  shortenUrl(req: ShortenUrlRequest) {
-    return this.http.post('/api/shorten-url', req);
+  generateShortUrl(req: ShortenUrlRequest): Observable<ShortenUrl> {
+    return this.http.post<ShortenUrl>('/s', req);
   }
 
-  urlPreview(url: string) {
-    return this.http.get('/api/shorten-url/preview', {
-      params: { url }
-    })
+  getUserUrls(): Observable<ShortenUrl[]> {
+    return this.http.get<ShortenUrl[]>('/s');
   }
+
+  // updateUrl(req: ShortenUrl): Observable<ShortenUrl> {
+  //   return this.http.put<ShortenUrl>('/s', req);
+  // }
 
 }

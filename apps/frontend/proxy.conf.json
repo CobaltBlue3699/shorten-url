@@ -1,5 +1,5 @@
 {
-  "/api": {
+  "/": {
     "target": "http://www.shorten-url.com:3000",
     "secure": false
   }

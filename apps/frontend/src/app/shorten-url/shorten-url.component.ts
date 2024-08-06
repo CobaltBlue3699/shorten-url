@@ -2,19 +2,22 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ShortenUrlService } from './shorten-url.service';
 import { AbstractControl, FormControl, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
-
+import { forkJoin } from 'rxjs';
 @Component({
   selector: 'app-shorten-url',
   standalone: true,
   imports: [CommonModule, FormsModule, ReactiveFormsModule],
-  templateUrl: './shorten-url.component.html',
+
+templateUrl: './shorten-url.component.html',
   styleUrl: './shorten-url.component.scss',
 })
 export class ShortenUrlComponent {
-  short = inject(ShortenUrlService);
+  service = inject(ShortenUrlService);
+  isProcess = false;
+  isSuccess = false;
 
   urlForm: FormGroup = new FormGroup({
-    url: new FormControl('', [
+    originalUrl: new FormControl('', [
         Validators.required,
         Validators.minLength(7),
         (control: AbstractControl): ValidationErrors | null => {
@@ -28,9 +31,11 @@ export class ShortenUrlComponent {
 
   public onSubmit() {
     if(this.urlForm.valid) {
-      const { url } = this.urlForm.value;
-      this.short.urlPreview(url).subscribe(res => {
-        console.log(res);
+      const { originalUrl } = this.urlForm.value;
+      this.isProcess = true;
+      this.isSuccess = false;
+      this.service.generateShortUrl({ originalUrl }).subscribe(res => {
+        console.log(res)
       })
     }
   }

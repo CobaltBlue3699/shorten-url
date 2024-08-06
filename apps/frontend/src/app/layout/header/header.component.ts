@@ -16,13 +16,13 @@ export class HeaderComponent implements OnInit {
   user: any = {};
 
   ngOnInit(): void {
-    this.httpClient.get(`/api/auth/me`).subscribe((res) => {
+    this.httpClient.get(`/auth/me`).subscribe((res) => {
       this.user = res;
     })
   }
 
   logout(): void {
-    this.httpClient.post('/api/auth/logout', {}).subscribe(() => {
+    this.httpClient.post('/auth/logout', {}).subscribe(() => {
       location.href = '';
     })
   }
