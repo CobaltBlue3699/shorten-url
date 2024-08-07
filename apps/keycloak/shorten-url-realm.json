@@ -1261,12 +1261,12 @@
       "hideOnLoginPage" : "false",
       "offlineAccess" : "true",
       "acceptsPromptNoneForwardFromClient" : "false",
-      "clientId" : "563023753355-99atiirusd28s37s5kftq5mbublnknv4.apps.googleusercontent.com",
+      "clientId" : "${replace_with_your_google_id}",
       "disableUserInfo" : "false",
       "filteredByClaim" : "false",
       "syncMode" : "FORCE",
       "userIp" : "true",
-      "clientSecret" : "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",
+      "clientSecret" : "${replace_with_your_google_client_secret}",
       "caseSensitiveOriginalUsername" : "false",
       "guiOrder" : "0"
     }
