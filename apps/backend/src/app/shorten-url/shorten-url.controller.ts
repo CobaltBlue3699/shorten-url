@@ -26,9 +26,14 @@ export class ShortenUrlController {
     @Res() res,
     @Param('key') key:string,
   ) {
-    const shortURL = await this.service.getShortUrl(key)
-    const { originalUrl } = await this.service.updateShortUrl(shortURL.shortUrl, { ...shortURL, usageCount: shortURL.usageCount + 1 })
-    res.redirect(originalUrl)
+    const shortUrl = await this.service.getShortUrl(key);
+    if (shortUrl) {
+      // maybe do it in cron job ?
+      await this.service.updateUsageCount(key);
+      res.redirect(shortUrl.originalUrl);
+    } else {
+      res.status(404).send('Short URL not found');
+    }
   }
 
   @Post()

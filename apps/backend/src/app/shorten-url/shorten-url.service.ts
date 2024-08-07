@@ -8,6 +8,8 @@ import { SHORTEN_STRATEGY, ShortenStrategy } from './shorten-strategy';
 import { InjectModel } from '@nestjs/mongoose';
 import { ShortUrl } from './schemas/shorten-url.schema';
 import { Model } from 'mongoose';
+import { UsageStat } from './schemas/usage-state.schema';
+import moment from 'moment';
 
 @Injectable()
 export class ShortenUrlService {
@@ -17,7 +19,8 @@ export class ShortenUrlService {
     private httpService: HttpService,
     @Inject(SHORTEN_STRATEGY)
     private readonly shortenStrategy: ShortenStrategy,
-    @InjectModel(ShortUrl.name) private shortUrlModel: Model<ShortUrl>
+    @InjectModel(ShortUrl.name) private shortUrlModel: Model<ShortUrl>,
+    @InjectModel(UsageStat.name) private readonly usageStatModel: Model<UsageStat>,
   ) {
     // console.log(this.shortenStrategy.calculate('123123'))
   }
@@ -47,6 +50,15 @@ export class ShortenUrlService {
         await new Promise(resolve => setTimeout(resolve, delay));
       }
     }
+  }
+
+  async updateUsageCount(shortUrl: string): Promise<void> {
+    const date = moment().format('YYYY-MM-DD');
+    await this.usageStatModel.findOneAndUpdate(
+      { shortUrl, date },
+      { $inc: { count: 1 } },
+      { upsert: true, new: true },
+    ).exec()
   }
 
   async fetchUrlPreview(url: string) {

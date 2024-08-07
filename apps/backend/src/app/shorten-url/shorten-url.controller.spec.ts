@@ -22,6 +22,7 @@ describe('ShortenUrlController', () => {
     getShortUrl: jest.fn(),
     updateShortUrl: jest.fn(),
     createShortUrl: jest.fn(),
+    updateUsageCount: jest.fn(),
   };
 
   const mockUser: JwtUser = {
@@ -93,14 +94,14 @@ describe('ShortenUrlController', () => {
   describe('redirect', () => {
     it('should redirect to the original URL', async () => {
       const res = { redirect: jest.fn() };
-      const mockUrl = { shortUrl: 'abc1234', originalUrl: 'https://example.com', usageCount: 0 };
+      const mockUrl = { shortUrl: 'abc1234', originalUrl: 'https://example.com' };
       mockShortUrlService.getShortUrl.mockResolvedValue(mockUrl);
       mockShortUrlService.updateShortUrl.mockResolvedValue({ ...mockUrl, usageCount: 1 });
 
       await controller.redirect(res, 'abc1234');
 
       expect(service.getShortUrl).toHaveBeenCalledWith('abc1234');
-      expect(service.updateShortUrl).toHaveBeenCalledWith(mockUrl.shortUrl, { ...mockUrl, usageCount: mockUrl.usageCount + 1 });
+      expect(service.updateUsageCount).toHaveBeenCalledWith(mockUrl.shortUrl);
       expect(res.redirect).toHaveBeenCalledWith('https://example.com');
     });
   });

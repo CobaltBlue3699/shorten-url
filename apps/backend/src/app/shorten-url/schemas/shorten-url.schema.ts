@@ -12,9 +12,6 @@ export class ShortUrl extends Document {
   @Prop({ required: true, index: true })
   userId!: string;
 
-  @Prop({ default: 0 })
-  usageCount!: number;
-
   @Prop()
   title!: string;
 

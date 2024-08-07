@@ -4,6 +4,9 @@ import { getModelToken } from '@nestjs/mongoose';
 import { ShortUrl } from './schemas/shorten-url.schema';
 import { HttpService } from '@nestjs/axios';
 import { RandomStrategy, SHORTEN_STRATEGY } from './shorten-strategy';
+import moment from 'moment';
+import { UsageStat } from './schemas/usage-state.schema';
+import { Model } from 'mongoose';
 
 const mockShortUrl = {
   _id: 'someId',
@@ -14,6 +17,12 @@ const mockShortUrl = {
   title: 'Example Title',
   description: 'Example Description',
   image: 'example.jpg',
+};
+
+const mockUrlUsage = {
+  shortUrl: 'abc1234',
+  date: '2024/08/07',
+  usageCount: 0,
 };
 
 const mockShortUrlModel = {
@@ -32,9 +41,20 @@ const mockShortUrlModel = {
   }),
 };
 
+const mockUsageStatModel = {
+  findOneAndUpdate: jest.fn().mockReturnValue({
+    exec: jest.fn().mockResolvedValue({ n: 1, nModified: 1, ok: 1 }),
+  }),
+};
+
+type MockModel<T = any> = Partial<Record<keyof Model<T>, jest.Mock>> & {
+  new (data: any): any;
+};
+
 describe('ShortenUrlService', () => {
   let service: ShortenUrlService;
-  let model: typeof mockShortUrlModel;
+  let model: MockModel<ShortUrl>;
+  let usageStatModel: MockModel<UsageStat>;
   let httpService: HttpService;
 
   const mockHttpService = {
@@ -48,21 +68,26 @@ describe('ShortenUrlService', () => {
           provide: SHORTEN_STRATEGY,
           useClass: RandomStrategy,
         },
-        ShortenUrlService,
         {
           provide: getModelToken(ShortUrl.name),
           useValue: mockShortUrlModel,
         },
         {
+          provide: getModelToken(UsageStat.name),
+          useValue: mockUsageStatModel,
+        },
+        {
           provide: HttpService,
           useValue: mockHttpService,
         },
+        ShortenUrlService,
       ],
     }).compile();
 
     service = module.get<ShortenUrlService>(ShortenUrlService);
     model = module.get(getModelToken(ShortUrl.name));
     httpService = module.get<HttpService>(HttpService);
+    usageStatModel = module.get(getModelToken(UsageStat.name));
   });
 
   it('should be defined', () => {
@@ -91,6 +116,21 @@ describe('ShortenUrlService', () => {
         description: 'Example Description',
         image: 'example.jpg',
       }));
+    });
+  });
+
+  describe('updateUsageCount', () => {
+    it('should update the usage count for the given short URL', async () => {
+      const shortUrl = 'abc1234';
+      const date = moment().format('YYYY-MM-DD');
+
+      await service.updateUsageCount(shortUrl);
+
+      expect(usageStatModel.findOneAndUpdate).toHaveBeenCalledWith(
+        { shortUrl, date },
+        { $inc: { count: 1 } },
+        { upsert: true, new: true }
+      );
     });
   });
 
