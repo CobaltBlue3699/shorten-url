@@ -18,6 +18,8 @@ import { CoreModule } from './core/core.module';
 import { ShortenUrlModule } from './shorten-url/shorten-url.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { BullModule } from '@nestjs/bull';
+import * as redisStore from 'cache-manager-redis-store';
+import { CacheModule } from '@nestjs/cache-manager';
 
 console.log(__dirname);
 @Module({
@@ -64,6 +66,20 @@ console.log(__dirname);
               port: configService.get('REDIS_PORT'),
             },
           }
+      },
+      inject: [ConfigService],
+    }),
+    CacheModule.registerAsync({
+      imports: [ConfigModule],
+      isGlobal: true,
+      useFactory: async (configService: ConfigService) => {
+        // console.log(configService.get<number>('CACHE_TTL'));
+        return {
+          store: redisStore,
+          host: configService.get<string>('REDIS_HOST'),
+          port: configService.get<number>('REDIS_PORT'),
+          ttl: Number(configService.get<number>('CACHE_TTL')), // Time to live in seconds
+        }
       },
       inject: [ConfigService],
     }),

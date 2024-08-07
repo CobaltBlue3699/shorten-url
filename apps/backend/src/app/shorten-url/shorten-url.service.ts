@@ -10,6 +10,7 @@ import { ShortUrl } from './schemas/shorten-url.schema';
 import { Model } from 'mongoose';
 import { UsageStat } from './schemas/usage-state.schema';
 import moment from 'moment';
+import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
 
 @Injectable()
 export class ShortenUrlService {
@@ -21,6 +22,7 @@ export class ShortenUrlService {
     private readonly shortenStrategy: ShortenStrategy,
     @InjectModel(ShortUrl.name) private shortUrlModel: Model<ShortUrl>,
     @InjectModel(UsageStat.name) private readonly usageStatModel: Model<UsageStat>,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {
     // console.log(this.shortenStrategy.calculate('123123'))
   }
@@ -120,7 +122,17 @@ export class ShortenUrlService {
   }
 
   async getShortUrl(shortUrl: string): Promise<ShortUrl> {
-    return this.shortUrlModel.findOne({ shortUrl }).exec();
+    const cachedShortUrl = await this.cacheManager.get<ShortUrl>(shortUrl);
+    if (cachedShortUrl) {
+      // console.log('get it from cache')
+      return cachedShortUrl;
+    }
+
+    const shortUrlDoc = await this.shortUrlModel.findOne({ shortUrl }).exec();
+    if (shortUrlDoc) {
+      await this.cacheManager.set(shortUrl, shortUrlDoc, 60 * 60 * 1000); // Cache for 1 hour
+    }
+    return shortUrlDoc;
   }
 
   async getShortUrlDeatils(shortUrl: string): Promise<ShortUrl> {
