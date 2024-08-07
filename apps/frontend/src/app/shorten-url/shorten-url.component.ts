@@ -36,6 +36,9 @@ export class ShortenUrlComponent {
       this.isSuccess = false;
       this.service.generateShortUrl({ originalUrl }).subscribe(res => {
         console.log(res)
+        this.service.getUrlDetails(res.shortUrl).subscribe(res => {
+          console.log(res)
+        })
       })
     }
   }

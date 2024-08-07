@@ -17,6 +17,7 @@ import {
 import { CoreModule } from './core/core.module';
 import { ShortenUrlModule } from './shorten-url/shorten-url.module';
 import { MongooseModule } from '@nestjs/mongoose';
+import { BullModule } from '@nestjs/bull';
 
 console.log(__dirname);
 @Module({
@@ -53,6 +54,18 @@ console.log(__dirname);
           retryDelay: configService.get('MONGODB_RETRY_DELAY'),
         }
       }
+    }),
+    BullModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory(configService: ConfigService) {
+          return {
+            redis: {
+              host: configService.get('REDIS_HOST'),
+              port: configService.get('REDIS_PORT'),
+            },
+          }
+      },
+      inject: [ConfigService],
     }),
     ShortenUrlModule,
   ],

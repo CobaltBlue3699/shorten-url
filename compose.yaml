@@ -77,6 +77,15 @@ services:
     volumes:
       - mongo-data:/data/db
 
+  redis:
+    image: 'bitnami/redis:7.0.15'
+    container_name: redis
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    restart: always
+    ports:
+      - "6379:6379"
+
   # nestjs as backend
   # debug mode is not working between docker and nx, checkout this in the feature.
   # issue: https://github.com/nrwl/nx/issues/14126

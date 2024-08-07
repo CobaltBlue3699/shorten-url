@@ -34,6 +34,10 @@ export class ShortenUrlService {
     return this.http.get<ShortenUrl[]>('/s');
   }
 
+  getUrlDetails(shortUrl: string) {
+    return this.http.get(`/s/details/${shortUrl}`)
+  }
+
   // updateUrl(req: ShortenUrl): Observable<ShortenUrl> {
   //   return this.http.put<ShortenUrl>('/s', req);
   // }

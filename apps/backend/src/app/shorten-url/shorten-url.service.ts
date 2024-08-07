@@ -54,6 +54,7 @@ export class ShortenUrlService {
 
   async updateUsageCount(shortUrl: string): Promise<void> {
     const date = moment().format('YYYY-MM-DD');
+    // console.log('bull goooooooooooooooo')
     await this.usageStatModel.findOneAndUpdate(
       { shortUrl, date },
       { $inc: { count: 1 } },
@@ -120,6 +121,21 @@ export class ShortenUrlService {
 
   async getShortUrl(shortUrl: string): Promise<ShortUrl> {
     return this.shortUrlModel.findOne({ shortUrl }).exec();
+  }
+
+  async getShortUrlDeatils(shortUrl: string): Promise<ShortUrl> {
+    const resArr = await this.shortUrlModel.aggregate([
+      { $match: { shortUrl } },
+      {
+        $lookup: {
+          from: 'usagestats', // Ensure this matches the actual collection name
+          localField: 'shortUrl',
+          foreignField: 'shortUrl',
+          as: 'usageStats',
+        },
+      },
+    ]).exec()
+    return (resArr && resArr.length) === 0 ? null : resArr[0];
   }
 
   async updateShortUrl(shortUrl: string, updateData: Partial<ShortUrl>): Promise<ShortUrl> {
