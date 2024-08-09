@@ -5,8 +5,10 @@ html, body { height: 100%; margin: 0;
   overflow: hidden;}
 body {
   margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif;
-  background-image: url("../public/assets/img/background.png");
-  background-size: cover;
+  // background-image: url("../public/assets/img/dark.jpg");
+  // background-size: cover;
+  background: rgb(2,0,36);
+  background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(126,126,150,1) 35%, rgba(0,212,255,1) 100%);
 }
 
 .shadow {
@@ -27,6 +29,24 @@ body {
 
 .h-full {
   height: 100%;
+}
+
+.absolute {
+  position: absolute;
+}
+
+.relative {
+  position: relative;
+}
+
+.h-0 {
+  height: 0;
+}
+
+.single-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 ul li {

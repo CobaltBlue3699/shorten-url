@@ -2,7 +2,7 @@ header {
   width: 100%;
   transform: translateY(0);
   transition: transform 0.3s ease;
-  background-color: #fff;
+  background-color: transparent;
   .header-container {
     height: 56px;
     padding: 0 16px;
@@ -21,6 +21,10 @@ header {
       display: flex;
       flex-direction: row;
       align-items: center;
+      .logo {
+        color: darkturquoise;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      }
     }
     .center {
       flex: 0 1 732px;
