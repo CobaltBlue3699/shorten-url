@@ -74,6 +74,14 @@ export class ShortenUrlService {
       const description = $('meta[property="og:description"]').attr('content') || $('meta[name="description"]').attr('content') || '';
       const image = $('meta[property="og:image"]').attr('content') || '';
 
+      // 抓取 icon
+      let icon = $('link[rel="icon"]').attr('href') || $('link[rel="shortcut icon"]').attr('href') || '';
+      if (icon && !icon.startsWith('http')) {
+        icon = new URL(icon, url).href;  // 如果是相對路徑，轉換為絕對路徑
+      } else if (!icon) {
+        icon = `${new URL(url).origin}/favicon.ico`;  // 如果沒有找到，使用默認的 /favicon.ico
+      }
+
       // 創建DOMPurify實例
       const window = new JSDOM('').window;
       const DOMPurify = createDOMPurify(window);
@@ -85,7 +93,8 @@ export class ShortenUrlService {
       return {
         title: cleanTitle,
         description: cleanDescription,
-        image
+        image,
+        icon
       };
     } catch (error) {
       if (error.response) {
@@ -99,8 +108,8 @@ export class ShortenUrlService {
         // 設置請求時出現錯誤
         console.error('Error setting up request:', error.message);
       }
-      throw new HttpException(`Failed to fetch URL preview: ${error.cause}`, HttpStatus.INTERNAL_SERVER_ERROR);
-      // return null;
+      console.error(`Failed to fetch URL preview: ${error.cause}`, error.message);
+      return { title: '', description: '', image: '', icon: '' };
     }
   }
 
@@ -111,9 +120,9 @@ export class ShortenUrlService {
    * @returns
    */
   async createShortUrl(originalUrl: string, userId: string): Promise<ShortUrl> {
-    const { title, description, image } = await this.fetchUrlPreview(originalUrl);
+    const { title, description, image, icon } = await this.fetchUrlPreview(originalUrl);
     const shortUrl = await this.generatorShortUrl(originalUrl);
-    return this.retry<ShortUrl>(() => this.shortUrlModel.create({ originalUrl, shortUrl, userId, title, description, image }));
+    return this.retry<ShortUrl>(() => this.shortUrlModel.create({ originalUrl, shortUrl, userId, title, description, image, icon }));
     // return newShortUrl.save();
   }
 

@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
-export type ShortenUrl = {
+export type ShortUrl = {
   createdAt: string,
   description: string,
   image: string,
@@ -12,11 +12,12 @@ export type ShortenUrl = {
   updatedAt: string,
   usageCount: number,
   userId: string,
+  icon: string
   __v: number
   _id: string
 }
 
-export type ShortenUrlRequest = Pick<ShortenUrl, 'originalUrl'>;
+export type ShortenUrlRequest = Pick<ShortUrl, 'originalUrl'>;
 
 
 @Injectable({
@@ -26,12 +27,12 @@ export class ShortenUrlService {
 
   http = inject(HttpClient);
 
-  generateShortUrl(req: ShortenUrlRequest): Observable<ShortenUrl> {
-    return this.http.post<ShortenUrl>('/s', req);
+  generateShortUrl(req: ShortenUrlRequest): Observable<ShortUrl> {
+    return this.http.post<ShortUrl>('/s', req);
   }
 
-  getUserUrls(): Observable<ShortenUrl[]> {
-    return this.http.get<ShortenUrl[]>('/s');
+  getUserUrls(): Observable<ShortUrl[]> {
+    return this.http.get<ShortUrl[]>('/s');
   }
 
   getUrlDetails(shortUrl: string) {

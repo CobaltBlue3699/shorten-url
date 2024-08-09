@@ -25,6 +25,8 @@ import { UsageCountProcessor } from './usage-count.processor';
         },
         inject: [ConfigService],
       },
+      // 為何分兩個schema ?
+      // 因為需要時常update url的連結使用次數，分開可提升query效率
       {
         name: UsageStat.name,
         useFactory: () => UsageStatSchema,

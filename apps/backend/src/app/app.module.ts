@@ -20,6 +20,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { BullModule } from '@nestjs/bull';
 import * as redisStore from 'cache-manager-redis-store';
 import { CacheModule } from '@nestjs/cache-manager';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 console.log(__dirname);
 @Module({
@@ -47,7 +48,7 @@ console.log(__dirname);
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => {
-        console.log(configService.get('MONGODB_URL'))
+        // console.log(configService.get('MONGODB_URL'))
         return {
           uri: configService.get('MONGODB_URL'),
           user: configService.get('MONGODB_USER'),
@@ -107,4 +108,16 @@ console.log(__dirname);
     },
   ],
 })
-export class AppModule {}
+export class AppModule {
+  configureSwagger(app: any) {
+    const config = new DocumentBuilder()
+      .setTitle('Short URL API')
+      .setDescription('API for managing and creating short URLs')
+      .setVersion('1.0')
+      .addBearerAuth() // 添加认证方式
+      .build();
+
+    const document = SwaggerModule.createDocument(app, config);
+    SwaggerModule.setup('api', app, document);
+  }
+}
