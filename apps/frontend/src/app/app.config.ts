@@ -6,8 +6,9 @@ import {
   withHashLocation,
 } from '@angular/router';
 import { appRoutes } from './app.routes';
-import { provideHttpClient, withInterceptors, withInterceptorsFromDi } from '@angular/common/http';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { httpErrorInterceptor } from './intercepters/http-error.intercepter';
+import { apiInterceptor } from './intercepters/api-handle.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -19,7 +20,7 @@ export const appConfig: ApplicationConfig = {
       withDebugTracing()
     ),
     provideHttpClient(
-      withInterceptors([httpErrorInterceptor]),
+      withInterceptors([httpErrorInterceptor, apiInterceptor]),
       // withInterceptorsFromDi()
     )
   ],

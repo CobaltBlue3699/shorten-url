@@ -48,8 +48,8 @@
   .url-details {
     // transform: scaleY(0);
     transition: .5s;
-    width: 300px;
-    margin: 20px auto;
+    // width: 300px;
+    // margin: 20px auto;
     .info {
       display: flex;
       .url-description {
@@ -230,10 +230,4 @@
           }
       }
   }
-}
-.check {
-  stroke-dasharray: 130px 130px;
-  stroke-dashoffset: 130px;
-  -webkit-transition: stroke-dashoffset 4.1s linear 0s;
-  transition: stroke-dashoffset 1000ms ease-in-out;
 }

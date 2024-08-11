@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Document } from 'mongoose';
 
 @Schema()
@@ -21,15 +21,15 @@ export class ShortUrl extends Document {
   title!: string;
 
   @Prop()
-  @ApiProperty({ description: 'The description of the original URL', example: 'this website is for...' })
+  @ApiPropertyOptional({ description: 'The description of the original URL', example: 'this website is for...' })
   description!: string;
 
   @Prop()
-  @ApiProperty({ description: 'The image associated with the original URL', example: 'https://www.example.com/img/example.png' })
+  @ApiPropertyOptional({ description: 'The image associated with the original URL', example: 'https://www.example.com/img/example.png' })
   image!: string;
 
   @Prop()
-  @ApiProperty({ description: 'The icon associated with the original URL', example: 'https://www.example.com/img/icon/example.png' })
+  @ApiPropertyOptional({ description: 'The icon associated with the original URL', example: 'https://www.example.com/img/icon/example.png' })
   icon!: string;
 }
 

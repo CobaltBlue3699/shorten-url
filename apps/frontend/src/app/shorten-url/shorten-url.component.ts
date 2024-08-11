@@ -2,6 +2,7 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ShortUrl, ShortenUrlService } from './shorten-url.service';
 import { AbstractControl, FormControl, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-shorten-url',
@@ -26,6 +27,9 @@ export class ShortenUrlComponent {
   shortLink = computed(() => `http://www.shorten-url.com:3000/s/${this.shortUrl()?.shortUrl}`)
   lonkLink = computed(() => this.shortUrl()?.originalUrl)
   icon = computed(() => this.shortUrl()?.icon)
+
+  router = inject(Router);
+  route = inject(ActivatedRoute)
 
   urlForm: FormGroup = new FormGroup({
     originalUrl: new FormControl('', [
@@ -100,5 +104,9 @@ export class ShortenUrlComponent {
         document.body.removeChild(textArea);
       })
     }
+  }
+
+  goto(path:string) {
+    this.router.navigate([path], { relativeTo: this.route });
   }
 }

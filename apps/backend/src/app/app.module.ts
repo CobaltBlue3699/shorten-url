@@ -4,7 +4,7 @@ import { Module } from '@nestjs/common';
 // import { AppService } from './app.service';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
-import { APP_FILTER, APP_GUARD } from '@nestjs/core';
+import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import {
@@ -21,6 +21,8 @@ import { BullModule } from '@nestjs/bull';
 import * as redisStore from 'cache-manager-redis-store';
 import { CacheModule } from '@nestjs/cache-manager';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { ApiExceptionsFilter } from './core/exception.filter';
+import { ResponseInterceptor } from './core/response.interceptor';
 
 console.log(__dirname);
 @Module({
@@ -106,6 +108,14 @@ console.log(__dirname);
       provide: APP_FILTER,
       useClass: UnauthorizedFilter,
     },
+    {
+      provide: APP_FILTER,
+      useClass: ApiExceptionsFilter,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: ResponseInterceptor
+    }
   ],
 })
 export class AppModule {

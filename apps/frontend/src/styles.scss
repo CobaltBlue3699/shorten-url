@@ -1,14 +1,23 @@
 /* You can add global styles to this file, and also import other style files */
 @import url(https://fonts.googleapis.com/css?family=Roboto:300);
+@import "primeng/resources/themes/lara-light-blue/theme.css";
+@import "primeng/resources/primeng.css";
+@import "primeicons/primeicons.css";
+
 // Your custom styles
-html, body { height: 100%; margin: 0;
-  overflow: hidden;}
+html,
 body {
-  margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+}
+body {
+  margin: 0;
+  font-family: Roboto, 'Helvetica Neue', sans-serif;
   // background-image: url("../public/assets/img/dark.jpg");
   // background-size: cover;
-  background: rgb(2,0,36);
-  background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(126,126,150,1) 35%, rgba(0,212,255,1) 100%);
+  background: rgb(2, 0, 36);
+  background: linear-gradient(90deg, rgba(2, 0, 36, 1) 0%, rgba(126, 126, 150, 1) 35%, rgba(0, 212, 255, 1) 100%);
 }
 
 .shadow {
@@ -43,6 +52,14 @@ body {
   height: 0;
 }
 
+.m-0 {
+  margin: 0;
+}
+
+.p-0 {
+  padding: 0;
+}
+
 .single-ellipsis {
   overflow: hidden;
   text-overflow: ellipsis;
@@ -51,4 +68,30 @@ body {
 
 ul li {
   list-style-type: none;
+}
+
+::-webkit-scrollbar {
+  width: 7px;
+}
+
+::-webkit-scrollbar-button {
+  background: transparent;
+
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-track-piece {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 4px;
+
+  background-color: rgba(0, 0, 0, 0.4);
+
+  border: 1px solid slategrey;
+}
+
+::-webkit-scrollbar-track {
+  box-shadow: transparent;
 }

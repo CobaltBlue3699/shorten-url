@@ -1,14 +1,14 @@
-import { Body, Controller, Get, Inject, Param, Post, Res } from '@nestjs/common';
+import { Body, Controller, DefaultValuePipe, Get, Inject, Optional, Param, ParseIntPipe, Post, Query, Res } from '@nestjs/common';
 import { ShortenUrlService } from './shorten-url.service';
 import { AuthenticatedUser, JwtUser, Roles, Unprotected } from '@shorten-url/keycloak-connect';
 import { Role } from '../core/role.enum';
 import { Queue } from 'bull';
 import { InjectQueue } from '@nestjs/bull';
-import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags, PickType } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiParam, ApiProperty, ApiResponse, ApiTags, PickType } from '@nestjs/swagger';
 import { ShortUrl } from './schemas/shorten-url.schema';
+import { ApiGlobalResponse, ApiGlobalPaginationResponse } from '../core/response.decorator';
 
 export class CreateShortUrlReq extends PickType(ShortUrl, ['originalUrl'] as const) {}
-
 @ApiTags('Shorten URLs')
 @Controller('/s')
 export class ShortenUrlController {
@@ -18,26 +18,19 @@ export class ShortenUrlController {
   ) {}
 
   @Get()
-  @ApiOperation({ summary: 'Get User Short URLs' })
-  @ApiResponse({
-    status: 200,
-    description: 'Returns a list of short URLs for the authenticated user.',
-    type: [ShortUrl]
-  })
+  @ApiGlobalPaginationResponse('Get authenticated User His Short URLs.', ShortUrl)
   @ApiBearerAuth() // means api need Bearer token
   @Roles({ roles: [Role.User] })
-  async getUserShortUrls(@AuthenticatedUser() user: JwtUser): Promise<ShortUrl[]> {
-    return this.service.getUserShortUrls(user.sub);
+  async getUserShortUrls(
+    @AuthenticatedUser() user: JwtUser,
+    @Query('pageNo', new DefaultValuePipe(1), ParseIntPipe) pageNo: number,
+    @Query('pageSize', new DefaultValuePipe(10), ParseIntPipe) pageSize: number,
+  ) {
+    return this.service.getUserShortUrls(user.sub, pageNo, pageSize);
   }
 
   @Get('/details/:key')
-  @ApiOperation({ summary: 'Get Short URL Details' })
-  @ApiResponse({
-    status: 200,
-    description: 'Returns details of the specified short URL.',
-    type: ShortUrl
-  })
-  @ApiResponse({ status: 404, description: 'Short URL not found.' })
+  @ApiGlobalResponse('Get Short URL Details of the specified short URL.', ShortUrl)
   @ApiParam({
     name: 'key',
     description: 'The unique key representing the short URL.',
@@ -45,7 +38,10 @@ export class ShortenUrlController {
   })
   @ApiBearerAuth()
   @Roles({ roles: [Role.User] })
-  async getShortUrlDetails(@AuthenticatedUser() user: JwtUser, @Param('key') key: string) {
+  async getShortUrlDetails(
+    @AuthenticatedUser() user: JwtUser,
+    @Param('key') key: string,
+  ) {
     return await this.service.getShortUrlDeatils(key);
   }
 
@@ -71,12 +67,7 @@ export class ShortenUrlController {
   }
 
   @Post()
-  @ApiOperation({ summary: 'Create Short URL' })
-  @ApiResponse({
-    status: 201,
-    description: 'Short URL created successfully.',
-    type: ShortUrl
-  })
+  @ApiGlobalResponse('Create Short URL.', ShortUrl)
   @ApiBearerAuth() // 表示此端点需要 Bearer token 认证
   @Roles({ roles: [Role.User] })
   async createShortUrl(@AuthenticatedUser() user: JwtUser, @Body() req: CreateShortUrlReq) {

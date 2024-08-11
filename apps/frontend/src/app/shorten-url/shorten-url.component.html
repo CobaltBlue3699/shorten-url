@@ -52,7 +52,7 @@
       </div>
       <div class="container" style="margin-top: 20px">
         <div class="button-group button-group-1">
-          <button class="button-hold" style="width: 80px; padding: 12px">My URLs</button>
+          <button class="button-hold" style="width: 80px; padding: 12px" (click)="goto('../my-url')">My URLs</button>
           <button class="button-hold" style="width: 220px; margin-left: 10px; padding: 12px" (click)="resetShortUrl()">
             Shorten another
           </button>
@@ -64,29 +64,33 @@
               process: copyProcess,
               success: copySuccess
             }"
-            style="align-self: flex-end"
+            style="align-self: flex-end; padding: 12px;"
             (click)="copyShortUrl()"
           >
+            <i class="pi pi-copy" style="font-size: 1rem"></i>
             @if (copyProcess || copySuccess) {
-            Copied!
-            } @else { Copy }
+              Copied!
+            } @else {
+              Copy
+            }
           </button>
         </div>
       </div>
-      @if (image()) {
-      <div class="url-details">
-        <img style="border-radius: 5px; width: 300px" [src]="image()" [alt]="title()" />
-        <div class="info">
+      <hr style="margin: 25px;"/>
+      <div class="url-details container">
+        <div class="info" [style.width]="image() ? '40%' : '100%'">
           @if (icon()) {
           <img [src]="icon()" width="40px" height="40px" style="padding: 5px; margin-right: 8px" />
           }
           <div class="url-description">
             <h3 class="single-ellipsis">{{ title() }}</h3>
-            <p class="single-ellipsis">{{ description() }}</p>
+            <p *ngIf="description()" class="single-ellipsis">{{ description() }}</p>
           </div>
         </div>
+        @if (image()) {
+          <img style="border-radius: 5px; width: 300px" [src]="image()" [alt]="title()" />
+        }
       </div>
-      }
     </div>
     }
   </div>

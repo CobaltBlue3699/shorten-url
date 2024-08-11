@@ -2,6 +2,19 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
+export class Pagination<T> {
+  pageNo = 1;
+  pageSize = 10;
+  data!: T
+}
+
+export type UsageStat = {
+  _id: string;
+  shortUrl: string;
+  date: string;
+  count: number;
+}
+
 export type ShortUrl = {
   createdAt: string,
   description: string,
@@ -10,11 +23,14 @@ export type ShortUrl = {
   shortUrl: string,
   title: string,
   updatedAt: string,
-  usageCount: number,
   userId: string,
   icon: string
   __v: number
   _id: string
+}
+
+export type ShortUrlDetails = ShortUrl & {
+  usageStats: UsageStat[]
 }
 
 export type ShortenUrlRequest = Pick<ShortUrl, 'originalUrl'>;
@@ -31,12 +47,17 @@ export class ShortenUrlService {
     return this.http.post<ShortUrl>('/s', req);
   }
 
-  getUserUrls(): Observable<ShortUrl[]> {
-    return this.http.get<ShortUrl[]>('/s');
+  getUserUrls(pageNo = 1, pageSize = 10) {
+    return this.http.get<Pagination<ShortUrlDetails[]>>('/s', {
+      params: {
+        pageNo,
+        pageSize
+      }
+    });
   }
 
   getUrlDetails(shortUrl: string) {
-    return this.http.get(`/s/details/${shortUrl}`)
+    return this.http.get<ShortUrlDetails>(`/s/details/${shortUrl}`)
   }
 
   // updateUrl(req: ShortenUrl): Observable<ShortenUrl> {

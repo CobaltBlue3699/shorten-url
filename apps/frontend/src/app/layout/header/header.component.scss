@@ -22,6 +22,7 @@ header {
       flex-direction: row;
       align-items: center;
       .logo {
+        cursor: pointer;
         color: darkturquoise;
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       }

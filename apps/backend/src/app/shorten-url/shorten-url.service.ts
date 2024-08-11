@@ -1,5 +1,5 @@
 import { HttpService } from '@nestjs/axios';
-import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
 import * as cheerio from 'cheerio';
 import { JSDOM } from 'jsdom';
@@ -126,8 +126,19 @@ export class ShortenUrlService {
     // return newShortUrl.save();
   }
 
-  async getUserShortUrls(userId: string): Promise<Array<ShortUrl>> {
-    return this.shortUrlModel.find({ userId }).exec();
+  async getUserShortUrls(userId: string, page = 1, limit = 10) {
+    const skip = (page - 1) * limit;
+    const urls = await this.shortUrlModel
+      .find({ userId })
+      .skip(skip)
+      .limit(limit)
+      .sort({ createdAt: -1 })
+      .exec();
+    return {
+      pageNo: page,
+      pageSize: urls.length,
+      data: urls
+    }
   }
 
   async getShortUrl(shortUrl: string): Promise<ShortUrl> {
@@ -153,6 +164,9 @@ export class ShortenUrlService {
           localField: 'shortUrl',
           foreignField: 'shortUrl',
           as: 'usageStats',
+          pipeline: [
+            { $sort: { date: 1 } } // Sort usageStats by date in ascending order
+          ],
         },
       },
     ]).exec()
