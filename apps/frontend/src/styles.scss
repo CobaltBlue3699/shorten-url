@@ -1,8 +1,43 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 /* You can add global styles to this file, and also import other style files */
 @import url(https://fonts.googleapis.com/css?family=Roboto:300);
-@import "primeng/resources/themes/lara-light-blue/theme.css";
-@import "primeng/resources/primeng.css";
-@import "primeicons/primeicons.css";
+@import 'primeng/resources/themes/lara-light-blue/theme.css';
+@import 'primeng/resources/primeng.css';
+@import 'primeicons/primeicons.css';
+
+:root {
+  /* Colors */
+  --primary-light: #5eead4;
+  --primary: #14b8a6;
+  --primary-dark: #0f766e;
+  --secondary-light: #bae6fd;
+  --secondary: #0ea5e9;
+  --secondary-dark: #0369a1;
+  --white: #ffffff;
+  --black: #000000;
+
+  /* Spacing */
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+}
+
+@layer base {
+  h1 {
+    @apply text-2xl;
+    @apply font-bold;
+  }
+  h2 {
+    @apply text-xl;
+  }
+  h3 {
+    @apply text-lg;
+  }
+}
 
 // Your custom styles
 html,
@@ -20,54 +55,11 @@ body {
   background: linear-gradient(90deg, rgba(2, 0, 36, 1) 0%, rgba(126, 126, 150, 1) 35%, rgba(0, 212, 255, 1) 100%);
 }
 
-.shadow {
-  box-shadow: 0 0 #0000, 0 0 #0000, 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-}
-
-.rounded {
-  border-radius: 1.5rem;
-}
-
-.hidden {
-  display: none;
-}
-
-.w-full {
-  width: 100%;
-}
-
-.h-full {
-  height: 100%;
-}
-
-.absolute {
-  position: absolute;
-}
-
-.relative {
-  position: relative;
-}
-
-.h-0 {
-  height: 0;
-}
-
-.m-0 {
-  margin: 0;
-}
-
-.p-0 {
-  padding: 0;
-}
 
 .single-ellipsis {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-
-ul li {
-  list-style-type: none;
 }
 
 ::-webkit-scrollbar {

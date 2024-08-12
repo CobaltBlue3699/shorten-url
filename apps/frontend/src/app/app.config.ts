@@ -2,7 +2,6 @@ import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
 import {
   provideRouter,
   withDebugTracing,
-  // withComponentInputBinding,
   withHashLocation,
 } from '@angular/router';
 import { appRoutes } from './app.routes';
@@ -21,7 +20,6 @@ export const appConfig: ApplicationConfig = {
     ),
     provideHttpClient(
       withInterceptors([httpErrorInterceptor, apiInterceptor]),
-      // withInterceptorsFromDi()
     )
   ],
 };
