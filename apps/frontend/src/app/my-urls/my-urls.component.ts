@@ -14,13 +14,13 @@ export type UsageState = {
 }
 
 @Component({
-  selector: 'app-my-url',
+  selector: 'app-my-urls',
   standalone: true,
   imports: [CommonModule, ScrollerModule, VirtualScrollerModule, ScrollPanelModule, SkeletonModule],
-  templateUrl: './my-url.component.html',
-  styleUrl: './my-url.component.scss',
+  templateUrl: './my-urls.component.html',
+  styleUrl: './my-urls.component.scss',
 })
-export class MyUrlComponent implements OnInit, OnDestroy {
+export class MyUrlsComponent implements OnInit, OnDestroy {
 
   shortUrlService = inject(ShortenUrlService);
   service = inject(ShortenUrlService);

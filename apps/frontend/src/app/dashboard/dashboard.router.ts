@@ -6,8 +6,8 @@ export const DASHBOARD_ROUTES: Route[] = [
     loadComponent: async () => (await import('../shorten-url/shorten-url.component')).ShortenUrlComponent,
   },
   {
-    path: 'my-url',
-    loadComponent: async () => (await import('../my-url/my-url.component')).MyUrlComponent,
+    path: 'my-urls',
+    loadComponent: async () => (await import('../my-urls/my-urls.component')).MyUrlsComponent,
   },
   // ...
 ];
