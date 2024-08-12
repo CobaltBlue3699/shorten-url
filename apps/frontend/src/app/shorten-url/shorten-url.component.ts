@@ -24,7 +24,7 @@ export class ShortenUrlComponent {
   image = computed(() => this.shortUrl()?.image)
   title = computed(() => this.shortUrl()?.title)
   description = computed(() => this.shortUrl()?.description)
-  shortLink = computed(() => `http://www.shorten-url.com:3000/s/${this.shortUrl()?.shortUrl}`)
+  shortLink = computed(() => `http://www.shorten-url.com:3000/${this.shortUrl()?.key}`)
   lonkLink = computed(() => this.shortUrl()?.originalUrl)
   icon = computed(() => this.shortUrl()?.icon)
 
@@ -37,7 +37,16 @@ export class ShortenUrlComponent {
         Validators.minLength(7),
         (control: AbstractControl): ValidationErrors | null => {
           // eslint-disable-next-line no-useless-escape
-          const forbidden = !/^(http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\*\+,;=.]+$/.test(control.value);
+          const urlPattern = new RegExp(
+            '^(https?:\\/\\/)?' + // Protocol (optional)
+            '((([a-zA-Z0-9\\-]+\\.)+[a-zA-Z]{2,})|' + // Domain name and extension
+            '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR IPv4 address
+            '(\\:\\d+)?' + // Port (optional)
+            '(\\/[-a-zA-Z0-9@:%._+~#=]*)*' + // Path (optional)
+            '(\\?[;&a-zA-Z0-9%_.,~+=-]*)?' + // Query string (optional)
+            '(\\#[-a-zA-Z0-9_]*)?$' // Fragment (optional)
+          );
+          const forbidden = !urlPattern.test(control.value);
           return forbidden ? { forbidden: { value: control.value } } : null;
         }
       ]

@@ -1,19 +1,22 @@
-import { Injectable } from '@angular/core';
 import {
-  HttpEvent,
-  HttpHandler,
   HttpHandlerFn,
-  HttpInterceptor,
   HttpRequest,
   HttpResponse,
 } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { v4 as uuidv4 } from 'uuid'
 
 // TODO: statue != 0 時，toast錯誤訊息
 export function apiInterceptor(req: HttpRequest<unknown>, next: HttpHandlerFn) {
-  // Clone the request to add the authentication header.
-  const newReq = req.clone();
+
+  // Clone the request to add the X-Requested-With header
+  const newReq = req.clone({
+    setHeaders: {
+      'X-Requested-With': 'XMLHttpRequest',
+      'X-Request-ID': uuidv4(),
+    },
+  });
+
   return next(newReq).pipe(
     map((event) => {
       if (event instanceof HttpResponse) {

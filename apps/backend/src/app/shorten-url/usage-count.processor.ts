@@ -7,11 +7,9 @@ export class UsageCountProcessor {
   constructor(private readonly shortenUrlService: ShortenUrlService) {}
 
   @Process()
-  async handleUpdateUsageCount(job: Job<{ shortUrl: string }>) {
-    // Automatically remove job on completion
-    job.opts.removeOnComplete = true;
-    // Automatically remove job on failure
-    job.opts.removeOnFail = true;
-    await this.shortenUrlService.updateUsageCount(job.data.shortUrl);
+  async handleUpdateUsageCount(job: Job<{ key: string, req }>) {
+    // TODO: req for data analysis
+
+    await this.shortenUrlService.updateUsageCount(job.data.key);
   }
 }

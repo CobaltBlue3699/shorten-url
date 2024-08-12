@@ -10,7 +10,7 @@ export class ShortUrl extends Document {
 
   @Prop({ required: true, unique: true })
   @ApiProperty({ description: 'The short URL key', example: 'v5nXypS' })
-  shortUrl!: string;
+  key!: string;
 
   @Prop({ required: true, index: true })
   @ApiProperty({ description: 'The user ID', example: 'user-123', })

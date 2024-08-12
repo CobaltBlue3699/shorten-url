@@ -20,7 +20,6 @@ import helmet from 'helmet';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const appModule = app.get(AppModule);
-  appModule.configureSwagger(app);
   // const globalPrefix = 'api';
   // app.setGlobalPrefix(globalPrefix);
   // app.use(helmet());

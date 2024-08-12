@@ -10,7 +10,7 @@ export class Pagination<T> {
 
 export type UsageStat = {
   _id: string;
-  shortUrl: string;
+  key: string;
   date: string;
   count: number;
 }
@@ -20,7 +20,7 @@ export type ShortUrl = {
   description: string,
   image: string,
   originalUrl: string,
-  shortUrl: string,
+  key: string,
   title: string,
   updatedAt: string,
   userId: string,
@@ -44,11 +44,11 @@ export class ShortenUrlService {
   http = inject(HttpClient);
 
   generateShortUrl(req: ShortenUrlRequest): Observable<ShortUrl> {
-    return this.http.post<ShortUrl>('/s', req);
+    return this.http.post<ShortUrl>('/urls', req);
   }
 
   getUserUrls(pageNo = 1, pageSize = 10) {
-    return this.http.get<Pagination<ShortUrlDetails[]>>('/s', {
+    return this.http.get<Pagination<ShortUrlDetails[]>>('/urls', {
       params: {
         pageNo,
         pageSize
@@ -56,8 +56,8 @@ export class ShortenUrlService {
     });
   }
 
-  getUrlDetails(shortUrl: string) {
-    return this.http.get<ShortUrlDetails>(`/s/details/${shortUrl}`)
+  getUrlDetails(key: string) {
+    return this.http.get<ShortUrlDetails>(`/urls/${key}`)
   }
 
   // updateUrl(req: ShortenUrl): Observable<ShortenUrl> {

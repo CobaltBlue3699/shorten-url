@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 
 // import { AppController } from './app.controller';
 // import { AppService } from './app.service';
@@ -23,6 +23,7 @@ import { CacheModule } from '@nestjs/cache-manager';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ApiExceptionsFilter } from './core/exception.filter';
 import { ResponseInterceptor } from './core/response.interceptor';
+import { StaticMiddleware } from './core/static.middleware';
 
 console.log(__dirname);
 @Module({
@@ -118,16 +119,23 @@ console.log(__dirname);
     }
   ],
 })
-export class AppModule {
+export class AppModule implements NestModule {
+
   configureSwagger(app: any) {
     const config = new DocumentBuilder()
       .setTitle('Short URL API')
       .setDescription('API for managing and creating short URLs')
       .setVersion('1.0')
-      .addBearerAuth() // 添加认证方式
+      .addBearerAuth()
       .build();
 
     const document = SwaggerModule.createDocument(app, config);
-    SwaggerModule.setup('api', app, document);
+    SwaggerModule.setup('docs', app, document);
+  }
+
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(StaticMiddleware)
+      .forRoutes('*');
   }
 }

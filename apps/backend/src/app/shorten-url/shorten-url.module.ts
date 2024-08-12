@@ -17,7 +17,7 @@ import { UsageCountProcessor } from './usage-count.processor';
         name: ShortUrl.name,
         useFactory: (configService: ConfigService) => {
           const schema = ShortUrlSchema;
-          schema.index({ shortUrl: 1 }, { unique: true });
+          schema.index({ key: 1 }, { unique: true });
           schema.index({ userId: 1 });
           schema.set('timestamps', true);
           schema.set('expireAfterSeconds', configService.get<number>('SHORT_URL_EXPIRE_SECOND'));

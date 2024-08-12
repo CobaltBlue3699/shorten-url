@@ -33,9 +33,9 @@ export class ShortenUrlService {
    * 1. random 7碼 的 base62，會有 62^7 的空間可儲存url，相對的同一個url會有不同的result，視專案需求。
    * 2. MD5後base62 encode後取前7碼，優點是同樣的url會有同樣的result，缺點是速度慢，且實做user管理自己的短網址時，db結構會較為複雜。
    * @param url
-   * @returns shorten url
+   * @returns hashed key
    */
-  async generatorShortUrl(url: string) {
+  async generatorKey(url: string) {
     return await this.shortenStrategy.calculate(url)
   }
 
@@ -54,11 +54,11 @@ export class ShortenUrlService {
     }
   }
 
-  async updateUsageCount(shortUrl: string): Promise<void> {
+  async updateUsageCount(key: string): Promise<void> {
     const date = moment().format('YYYY-MM-DD');
     // console.log('bull goooooooooooooooo')
     await this.usageStatModel.findOneAndUpdate(
-      { shortUrl, date },
+      { key, date },
       { $inc: { count: 1 } },
       { upsert: true, new: true },
     ).exec()
@@ -121,8 +121,8 @@ export class ShortenUrlService {
    */
   async createShortUrl(originalUrl: string, userId: string): Promise<ShortUrl> {
     const { title, description, image, icon } = await this.fetchUrlPreview(originalUrl);
-    const shortUrl = await this.generatorShortUrl(originalUrl);
-    return this.retry<ShortUrl>(() => this.shortUrlModel.create({ originalUrl, shortUrl, userId, title, description, image, icon }));
+    const key = await this.generatorKey(originalUrl);
+    return this.retry<ShortUrl>(() => this.shortUrlModel.create({ originalUrl, key, userId, title, description, image, icon }));
     // return newShortUrl.save();
   }
 
@@ -141,28 +141,28 @@ export class ShortenUrlService {
     }
   }
 
-  async getShortUrl(shortUrl: string): Promise<ShortUrl> {
-    const cachedShortUrl = await this.cacheManager.get<ShortUrl>(shortUrl);
+  async getShortUrl(key: string): Promise<ShortUrl> {
+    const cachedShortUrl = await this.cacheManager.get<ShortUrl>(key);
     if (cachedShortUrl) {
       // console.log('get it from cache')
       return cachedShortUrl;
     }
 
-    const shortUrlDoc = await this.shortUrlModel.findOne({ shortUrl }).exec();
+    const shortUrlDoc = await this.shortUrlModel.findOne({ key }).exec();
     if (shortUrlDoc) {
-      await this.cacheManager.set(shortUrl, shortUrlDoc, 60 * 60 * 1000); // Cache for 1 hour
+      await this.cacheManager.set(key, shortUrlDoc, 60 * 60 * 1000); // Cache for 1 hour
     }
     return shortUrlDoc;
   }
 
-  async getShortUrlDeatils(shortUrl: string): Promise<ShortUrl> {
+  async getShortUrlDeatils(key: string): Promise<ShortUrl> {
     const resArr = await this.shortUrlModel.aggregate([
-      { $match: { shortUrl } },
+      { $match: { key } },
       {
         $lookup: {
           from: 'usagestats', // Ensure this matches the actual collection name
-          localField: 'shortUrl',
-          foreignField: 'shortUrl',
+          localField: 'key',
+          foreignField: 'key',
           as: 'usageStats',
           pipeline: [
             { $sort: { date: 1 } } // Sort usageStats by date in ascending order
@@ -173,11 +173,11 @@ export class ShortenUrlService {
     return (resArr && resArr.length) === 0 ? null : resArr[0];
   }
 
-  async updateShortUrl(shortUrl: string, updateData: Partial<ShortUrl>): Promise<ShortUrl> {
-    return this.shortUrlModel.findOneAndUpdate({ shortUrl }, updateData, { new: true }).exec();
+  async updateShortUrl(key: string, updateData: Partial<ShortUrl>): Promise<ShortUrl> {
+    return this.shortUrlModel.findOneAndUpdate({ key }, updateData, { new: true }).exec();
   }
 
-  async deleteShortUrl(shortUrl: string): Promise<ShortUrl> {
-    return this.shortUrlModel.findOneAndDelete({ shortUrl }).exec();
+  async deleteShortUrl(key: string): Promise<ShortUrl> {
+    return this.shortUrlModel.findOneAndDelete({ key }).exec();
   }
 }

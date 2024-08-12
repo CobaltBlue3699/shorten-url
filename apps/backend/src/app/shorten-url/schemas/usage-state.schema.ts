@@ -4,7 +4,7 @@ import { Document } from 'mongoose';
 @Schema()
 export class UsageStat extends Document {
   @Prop({ required: true })
-  shortUrl: string;
+  key: string;
 
   @Prop({ required: true })
   date: string;
@@ -14,4 +14,4 @@ export class UsageStat extends Document {
 }
 
 export const UsageStatSchema = SchemaFactory.createForClass(UsageStat);
-UsageStatSchema.index({ shortUrl: 1, date: 1 }, { unique: true });
+UsageStatSchema.index({ key: 1, date: 1 }, { unique: true });

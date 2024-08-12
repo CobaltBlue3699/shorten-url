@@ -1,7 +1,11 @@
 import { HttpModule } from '@nestjs/axios';
-import { Global, Module } from '@nestjs/common';
+import { Global, Module, SetMetadata } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Agent } from 'https';
+
+export const BYPASS_RESPONSE_FORMAT = 'bypassResponseFormat';
+
+export const BypassResponseFormat = () => SetMetadata(BYPASS_RESPONSE_FORMAT, true);
 
 @Global()
 @Module({
