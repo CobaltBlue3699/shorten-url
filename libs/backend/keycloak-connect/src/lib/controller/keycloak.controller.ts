@@ -64,6 +64,7 @@ export class KeycloakController {
       url += `?client_id=${this.opts.clientId}`;
       url += `&response_type=code`;
       url += `&scope=openid`;
+      url += `&prompt=select_account`;
       url += `&redirect_uri=${redirectURL}`;
       if (state) {
         url += `&state=${state}`;
