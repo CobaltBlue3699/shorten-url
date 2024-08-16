@@ -80,7 +80,7 @@
       <div class="url-details container">
         <div class="info" [style.width]="image() ? '40%' : '100%'">
           @if (icon()) {
-          <img [src]="icon()" width="40px" height="40px" style="padding: 5px; margin-right: 8px" />
+          <img [src]="icon()" width="40px" style="padding: 5px; margin-right: 8px; height: fit-content;" />
           }
           <div class="url-description">
             <h3 class="single-ellipsis">{{ title() }}</h3>

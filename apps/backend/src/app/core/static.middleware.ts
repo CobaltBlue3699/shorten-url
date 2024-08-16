@@ -11,6 +11,15 @@ export class StaticMiddleware implements NestMiddleware {
     if (isAjaxRequest || !existsSync(filePath)) {
       next();
     } else {
+      if (req.baseUrl === '') {
+        res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+        res.set('Pragma', 'no-cache');
+        res.set('Expires', '0');
+        res.set('Surrogate-Control', 'no-store');
+      } else {
+        // TODO: setting this from environment
+        res.set('Cache-Control', 'public, max-age=600');
+      }
       res.sendFile(filePath);
     }
   }

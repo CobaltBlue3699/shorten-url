@@ -8,6 +8,7 @@ import { appRoutes } from './app.routes';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { httpErrorInterceptor } from './intercepters/http-error.intercepter';
 import { apiInterceptor } from './intercepters/api-handle.interceptor';
+import { AppInfoService } from './services/app.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -20,6 +21,7 @@ export const appConfig: ApplicationConfig = {
     ),
     provideHttpClient(
       withInterceptors([httpErrorInterceptor, apiInterceptor]),
-    )
+    ),
+    AppInfoService
   ],
 };

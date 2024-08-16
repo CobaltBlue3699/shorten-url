@@ -8,6 +8,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UsageStat, UsageStatSchema } from './schemas/usage-state.schema';
 import { BullModule } from '@nestjs/bull';
 import { UsageCountProcessor } from './usage-count.processor';
+import { DeleteStatProcessor } from './del-stat.processor';
 
 @Module({
   imports: [
@@ -35,6 +36,9 @@ import { UsageCountProcessor } from './usage-count.processor';
     BullModule.registerQueue({
       name: 'usage-count',
     }),
+    BullModule.registerQueue({
+      name: 'del-stat',
+    }),
   ],
   controllers: [ShortenUrlController],
   providers: [
@@ -44,6 +48,7 @@ import { UsageCountProcessor } from './usage-count.processor';
       useClass: RandomStrategy,
     },
     UsageCountProcessor,
+    DeleteStatProcessor
   ],
 })
 export class ShortenUrlModule {}

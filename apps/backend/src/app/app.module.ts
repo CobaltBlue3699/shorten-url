@@ -24,6 +24,8 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ApiExceptionsFilter } from './core/exception.filter';
 import { ResponseInterceptor } from './core/response.interceptor';
 import { StaticMiddleware } from './core/static.middleware';
+import { AppController } from './app.controller';
+import { AppConfigService } from './app.service';
 
 console.log(__dirname);
 @Module({
@@ -89,10 +91,9 @@ console.log(__dirname);
     }),
     ShortenUrlModule,
   ],
-  controllers: [],
+  controllers: [AppController],
   providers: [
-    // AppService,
-    // KeycloakService,
+    AppConfigService,
     {
       provide: APP_GUARD,
       useClass: AuthGuard,
@@ -116,7 +117,7 @@ console.log(__dirname);
     {
       provide: APP_INTERCEPTOR,
       useClass: ResponseInterceptor
-    }
+    },
   ],
 })
 export class AppModule implements NestModule {

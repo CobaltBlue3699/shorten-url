@@ -8,6 +8,7 @@ import { Reflector } from '@nestjs/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { BYPASS_RESPONSE_FORMAT } from './core.module';
+import { ApiStatus } from './api-status.enum';
 
 @Injectable()
 export class ResponseInterceptor<T> implements NestInterceptor<T, any> {
@@ -25,7 +26,7 @@ export class ResponseInterceptor<T> implements NestInterceptor<T, any> {
 
     return next.handle().pipe(
       map((data) => ({
-        status: 0, // Custom success status
+        status: ApiStatus.SUCCESS, // Custom success status
         message: 'Success', // You can customize this based on your needs
         data,
       })),

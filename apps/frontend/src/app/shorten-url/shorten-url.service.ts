@@ -20,6 +20,7 @@ export type ShortUrl = {
   description: string,
   image: string,
   originalUrl: string,
+  shortUrl: string,
   key: string,
   title: string,
   updatedAt: string,
@@ -58,6 +59,10 @@ export class ShortenUrlService {
 
   getUrlDetails(key: string) {
     return this.http.get<ShortUrlDetails>(`/urls/${key}`)
+  }
+
+  deleteUrl(key: string) {
+    return this.http.delete<ShortUrl>(`/urls/${key}`)
   }
 
   // updateUrl(req: ShortenUrl): Observable<ShortenUrl> {

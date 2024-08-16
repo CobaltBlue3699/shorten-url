@@ -177,7 +177,12 @@ export class ShortenUrlService {
     return this.shortUrlModel.findOneAndUpdate({ key }, updateData, { new: true }).exec();
   }
 
-  async deleteShortUrl(key: string): Promise<ShortUrl> {
-    return this.shortUrlModel.findOneAndDelete({ key }).exec();
+  // only owner can delete it
+  async deleteShortUrl(key: string, userId: string): Promise<ShortUrl> {
+    return this.shortUrlModel.findOneAndDelete({ key, userId }).exec();
+  }
+
+  async deleteShortUrlStat(key: string) {
+    return this.usageStatModel.deleteMany({ key }).exec();
   }
 }

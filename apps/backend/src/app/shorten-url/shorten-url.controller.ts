@@ -1,4 +1,4 @@
-import { Body, Controller, DefaultValuePipe, Get, Inject, Param, ParseIntPipe, Post, Query, Req, Res } from '@nestjs/common';
+import { Body, Controller, DefaultValuePipe, Delete, Get, Inject, Param, ParseIntPipe, Post, Query, Req, Res } from '@nestjs/common';
 import { ShortenUrlService } from './shorten-url.service';
 import { AuthenticatedUser, JwtUser, Roles, Unprotected } from '@shorten-url/keycloak-connect';
 import { Role } from '../core/role.enum';
@@ -14,7 +14,8 @@ export class CreateShortUrlReq extends PickType(ShortUrl, ['originalUrl'] as con
 export class ShortenUrlController {
   constructor(
     @Inject() private service: ShortenUrlService,
-    @InjectQueue('usage-count') private usageCountQueue: Queue
+    @InjectQueue('usage-count') private usageCountQueue: Queue,
+    @InjectQueue('del-stat') private delStatQueue: Queue
   ) {}
 
   @Get('/urls')
@@ -70,8 +71,8 @@ export class ShortenUrlController {
         removeOnFail: true
       });
       res.redirect(shortUrl.originalUrl);
-    } else {
-      res.status(404).send('Short URL not found');
+    } else { // TODO: 404 page
+      res.status(404).redirect(`/#/${key}`);
     }
   }
 
@@ -81,5 +82,20 @@ export class ShortenUrlController {
   @Roles({ roles: [Role.User] })
   async createShortUrl(@AuthenticatedUser() user: JwtUser, @Body() req: CreateShortUrlReq) {
     return this.service.createShortUrl(req.originalUrl, user.sub);
+  }
+
+  @Delete('/urls/:key')
+  @ApiGlobalResponse('Delete Short URL.', ShortUrl)
+  @ApiBearerAuth()
+  @Roles({ roles: [Role.User] })
+  async deleteShortUrl(@AuthenticatedUser() user: JwtUser, @Param('key') key: string) {
+    const data = await this.service.deleteShortUrl(key, user.sub);
+    if (data) {
+      this.delStatQueue.add({ key }, {
+        removeOnComplete: true,
+        removeOnFail: true
+      })
+    }
+    return data;
   }
 }
