@@ -37,13 +37,6 @@ export class IpGeolocationService implements OnModuleInit {
     // this.handleCron();
   }
 
-  @Cron(CronExpression.EVERY_DAY_AT_NOON) // Noon
-  async handleNoonJob() {
-    const oldCollectionName = `GeoIp_${this.getYesterdayDate()}`;
-    await this.connection.db.dropCollection(oldCollectionName);
-    this.logger.debug(`Dropped old GeoIp backup collection: ${oldCollectionName}`);
-  }
-
   private async downloadAndParseCsv() {
     this.logger.debug('Downloading IP Geolocation CSV...');
     return new Promise((resolve, reject) => {
@@ -111,7 +104,7 @@ export class IpGeolocationService implements OnModuleInit {
     this.logger.debug(`Renamed ${this.geoTempCollectionName} to ${this.geoCollectionName} successfully.`);
   }
 
-  @Cron('0 12 * * *') // Every day at noon
+  @Cron(CronExpression.EVERY_DAY_AT_NOON) // Every day at noon
   async dropOldBackup() {
     const yesterdayDate = this.getYesterdayDate(); // Yesterday's date
     const collectionName = `${this.geoCollectionName}_${yesterdayDate}`;
