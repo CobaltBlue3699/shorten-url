@@ -5,7 +5,7 @@ import { RandomStrategy, SHORTEN_STRATEGY } from './shorten-strategy';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ShortUrl, ShortUrlSchema } from './schemas/shorten-url.schema';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { UsageStat, UsageStatSchema } from './schemas/usage-state.schema';
+import { CountryUsageSchema, CountryUsageStat, DailyUsageStat, DailyUsageStatSchema } from './schemas/usage-state.schema';
 import { BullModule } from '@nestjs/bull';
 import { UsageCountProcessor } from './usage-count.processor';
 import { DeleteStatProcessor } from './del-stat.processor';
@@ -26,11 +26,31 @@ import { DeleteStatProcessor } from './del-stat.processor';
         },
         inject: [ConfigService],
       },
-      // 為何分兩個schema ?
+      // 為何分開schema ?
       // 因為需要時常update url的連結使用次數，分開可提升query效率
       {
-        name: UsageStat.name,
-        useFactory: () => UsageStatSchema,
+        imports: [ConfigModule],
+        name: DailyUsageStat.name,
+        useFactory: (configService: ConfigService) => {
+          const schema = DailyUsageStatSchema;
+          schema.index({ key: 1, date: 1 }, { unique: true });
+          schema.set('timestamps', true);
+          schema.set('expireAfterSeconds', configService.get<number>('SHORT_URL_EXPIRE_SECOND'));
+          return schema;
+        },
+        inject: [ConfigService],
+      },
+      {
+        imports: [ConfigModule],
+        name: CountryUsageStat.name,
+        useFactory: (configService: ConfigService) => {
+          const schema = CountryUsageSchema;
+          schema.index({ key: 1, countryCode: 1 }, { unique: true });
+          schema.set('timestamps', true);
+          schema.set('expireAfterSeconds', configService.get<number>('SHORT_URL_EXPIRE_SECOND'));
+          return schema;
+        },
+        inject: [ConfigService],
       },
     ]),
     BullModule.registerQueue({

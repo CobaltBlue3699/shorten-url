@@ -1,0 +1,10 @@
+<p-tabView>
+  <p-tabPanel header="日流量統計">
+    <div class="card">
+      <app-daily-chart [dailyStats]="data.dailyUsageStats"></app-daily-chart>
+    </div>
+  </p-tabPanel>
+  <p-tabPanel header="地區統計">
+    <app-country-chart [countryStats]="data.countryUsageStats"></app-country-chart>
+  </p-tabPanel>
+</p-tabView>

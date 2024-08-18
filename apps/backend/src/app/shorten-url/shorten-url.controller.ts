@@ -7,6 +7,7 @@ import { InjectQueue } from '@nestjs/bull';
 import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags, PickType } from '@nestjs/swagger';
 import { ShortUrl } from './schemas/shorten-url.schema';
 import { ApiGlobalResponse, ApiGlobalPaginationResponse } from '../core/response.decorator';
+import { UserIP } from '../core/user-ip.decorator';
 
 export class CreateShortUrlReq extends PickType(ShortUrl, ['originalUrl'] as const) {}
 @ApiTags('Shorten URLs')
@@ -56,12 +57,11 @@ export class ShortenUrlController {
     example: 'v5nXypS',
   })
   @Unprotected()
-  async redirect(@Req() req, @Res() res, @Param('key') key: string) {
+  async redirect(@Req() req, @Res() res, @UserIP() ip: string, @Param('key') key: string) {
     const shortUrl = await this.service.getShortUrl(key);
     if (shortUrl) {
       const requestInfo = {
-        ip: req.ip,
-        method: req.method,
+        ip,
         url: req.url,
         headers: req.headers,
         // Add any other needed properties here

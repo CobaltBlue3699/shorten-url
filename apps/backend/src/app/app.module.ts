@@ -26,7 +26,8 @@ import { ResponseInterceptor } from './core/response.interceptor';
 import { StaticMiddleware } from './core/static.middleware';
 import { AppController } from './app.controller';
 import { AppConfigService } from './app.service';
-
+import { GeoIpModule } from './geoip/geoip.module';
+import { ScheduleModule } from '@nestjs/schedule';
 console.log(__dirname);
 @Module({
   imports: [
@@ -89,7 +90,9 @@ console.log(__dirname);
       },
       inject: [ConfigService],
     }),
+    GeoIpModule,
     ShortenUrlModule,
+    ScheduleModule.forRoot(),
   ],
   controllers: [AppController],
   providers: [

@@ -8,10 +8,15 @@ export class Pagination<T> {
   data!: T
 }
 
-export type UsageStat = {
-  _id: string;
+export type DailyStat = {
   key: string;
   date: string;
+  count: number;
+}
+
+export type CountryStat = {
+  key: string;
+  countryCode: string;
   count: number;
 }
 
@@ -31,7 +36,8 @@ export type ShortUrl = {
 }
 
 export type ShortUrlDetails = ShortUrl & {
-  usageStats: UsageStat[]
+  dailyUsageStats: DailyStat[],
+  countryUsageStats: CountryStat[]
 }
 
 export type ShortenUrlRequest = Pick<ShortUrl, 'originalUrl'>;

@@ -8,7 +8,8 @@ export class DeleteStatProcessor {
 
   @Process()
   async handle(job: Job<{ key: string }>) {
-    await this.shortenUrlService.deleteShortUrlStat(job.data.key);
+    await this.shortenUrlService.deleteDailyStat(job.data.key);
+    await this.shortenUrlService.deleteCountryStat(job.data.key);
     // console.log(`success delete:`, deleteResult);
   }
 }

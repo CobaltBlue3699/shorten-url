@@ -7,7 +7,9 @@ import { MenuModule } from 'primeng/menu';
 import { SkeletonModule } from 'primeng/skeleton';
 import { ScrollerModule } from 'primeng/scroller';
 import { LazyLoadEvent, MessageService, PrimeIcons } from 'primeng/api';
+import { DynamicDialogModule, DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { AppInfoService } from '../services/app.service';
+import { AnalyzeUrlComponent } from './analyze-url/analyze-url.component';
 
 export type UsageState = {
   date: string;
@@ -17,8 +19,16 @@ export type UsageState = {
 @Component({
   selector: 'app-my-urls',
   standalone: true,
-  imports: [CommonModule, ScrollerModule, SkeletonModule, ToastModule, MenuModule],
-  providers: [MessageService],
+  imports: [
+    CommonModule,
+    ScrollerModule,
+    SkeletonModule,
+    ToastModule,
+    MenuModule,
+    // DialogModule,
+    DynamicDialogModule,
+  ],
+  providers: [MessageService, DialogService],
   templateUrl: './my-urls.component.html',
   styleUrl: './my-urls.component.scss',
 })
@@ -27,6 +37,7 @@ export class MyUrlsComponent implements OnInit, OnDestroy {
   service = inject(ShortenUrlService);
   appInfoService = inject(AppInfoService);
   messageService = inject(MessageService);
+  dialogService = inject(DialogService);
 
   myUrls = signal<ShortUrlDetails[]>([]);
   location = inject(Location);
@@ -37,17 +48,34 @@ export class MyUrlsComponent implements OnInit, OnDestroy {
         item.key,
         [
           {
+            label: 'Analyze',
+            icon: PrimeIcons.CHART_BAR,
+            command: (event: any) => {
+              const btn = event.originalEvent.target.closest(".menu");
+              setTimeout(() => {
+                btn.click();
+              })
+              this.service.getUrlDetails(item.key).subscribe((res) => {
+                res.shortUrl = item.shortUrl
+                this.analyzeUrl(res);
+              });
+            },
+          },
+          {
             label: 'Delete',
             icon: PrimeIcons.TRASH,
-            command: () => {
+            command: (event: any) => {
+              const btn = event.originalEvent.target.closest(".menu");
+              setTimeout(() => {
+                btn.click();
+              })
               this.deleteShortUrl(item).subscribe((res) => {
-                console.log(res);
                 if (res) {
                   // delete success
-                  this.showSuccess('刪除成功')
+                  this.showSuccess('刪除成功');
                   this.myUrls.set(this.myUrls().filter((url) => url.key !== res.key));
                 } else {
-                  this.showWarn('服務異常...')
+                  this.showWarn('服務異常...');
                 }
               });
             },
@@ -64,6 +92,7 @@ export class MyUrlsComponent implements OnInit, OnDestroy {
   loading = false;
   private lazyLoad$ = new Subject<LazyLoadEvent>();
   private destroy$ = new Subject<void>();
+  ref: DynamicDialogRef | undefined;
 
   ngOnInit(): void {
     // this.loadItems();
@@ -143,6 +172,25 @@ export class MyUrlsComponent implements OnInit, OnDestroy {
 
   showError(msg: string, data?: any) {
     this.messageService.add({ severity: 'error', summary: 'Error', detail: msg, data });
+  }
+
+  analyzeUrl(data: ShortUrlDetails) {
+    this.ref = this.dialogService.open(AnalyzeUrlComponent, {
+      data,
+      header: 'Analyze',
+      width: '50vw',
+      modal: true,
+      breakpoints: {
+        '960px': '75vw',
+        '640px': '90vw',
+      },
+      closable: true,
+    });
+    this.ref.onClose.subscribe((res) => {
+      // console.log(`close: `, res);
+      // overlay 需要加上這行才可以正確關閉，疑似primeng bug
+      this.ref?.destroy();
+    });
   }
 
   // trackByKey: TrackByFunction<{ key: string }> = (index, item) => item.key;

@@ -8,7 +8,7 @@ import { SHORTEN_STRATEGY, ShortenStrategy } from './shorten-strategy';
 import { InjectModel } from '@nestjs/mongoose';
 import { ShortUrl } from './schemas/shorten-url.schema';
 import { Model } from 'mongoose';
-import { UsageStat } from './schemas/usage-state.schema';
+import { CountryUsageStat, DailyUsageStat } from './schemas/usage-state.schema';
 import moment from 'moment';
 import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
 
@@ -21,7 +21,8 @@ export class ShortenUrlService {
     @Inject(SHORTEN_STRATEGY)
     private readonly shortenStrategy: ShortenStrategy,
     @InjectModel(ShortUrl.name) private shortUrlModel: Model<ShortUrl>,
-    @InjectModel(UsageStat.name) private readonly usageStatModel: Model<UsageStat>,
+    @InjectModel(DailyUsageStat.name) private readonly dailyUsageStatModel: Model<DailyUsageStat>,
+    @InjectModel(CountryUsageStat.name) private readonly countryUsageStatModel: Model<CountryUsageStat>,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {
     // console.log(this.shortenStrategy.calculate('123123'))
@@ -54,11 +55,19 @@ export class ShortenUrlService {
     }
   }
 
-  async updateUsageCount(key: string): Promise<void> {
+  async updateDailyUsageCount(key: string): Promise<void> {
     const date = moment().format('YYYY-MM-DD');
     // console.log('bull goooooooooooooooo')
-    await this.usageStatModel.findOneAndUpdate(
+    await this.dailyUsageStatModel.findOneAndUpdate(
       { key, date },
+      { $inc: { count: 1 } },
+      { upsert: true, new: true },
+    ).exec()
+  }
+
+  async updateCountryUsageCount(key: string, countryCode: string): Promise<void> {
+    await this.countryUsageStatModel.findOneAndUpdate(
+      { key, countryCode },
       { $inc: { count: 1 } },
       { upsert: true, new: true },
     ).exec()
@@ -160,13 +169,21 @@ export class ShortenUrlService {
       { $match: { key } },
       {
         $lookup: {
-          from: 'usagestats', // Ensure this matches the actual collection name
+          from: this.dailyUsageStatModel.collection.name, // Ensure this matches the actual collection name
           localField: 'key',
           foreignField: 'key',
-          as: 'usageStats',
+          as: 'dailyUsageStats',
           pipeline: [
             { $sort: { date: 1 } } // Sort usageStats by date in ascending order
           ],
+        },
+      },
+      {
+        $lookup: {
+          from: this.countryUsageStatModel.collection.name, // Ensure this matches the actual collection name
+          localField: 'key',
+          foreignField: 'key',
+          as: 'countryUsageStats',
         },
       },
     ]).exec()
@@ -182,7 +199,11 @@ export class ShortenUrlService {
     return this.shortUrlModel.findOneAndDelete({ key, userId }).exec();
   }
 
-  async deleteShortUrlStat(key: string) {
-    return this.usageStatModel.deleteMany({ key }).exec();
+  async deleteDailyStat(key: string) {
+    return this.dailyUsageStatModel.deleteMany({ key }).exec();
+  }
+
+  async deleteCountryStat(key: string) {
+    return this.countryUsageStatModel.deleteMany({ key }).exec();
   }
 }
