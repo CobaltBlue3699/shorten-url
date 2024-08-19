@@ -34,7 +34,7 @@ export class IpGeolocationService implements OnModuleInit {
   }
 
   onModuleInit() { // for new environment
-    // this.handleCron();
+    this.handleCron();
   }
 
   private async downloadAndParseCsv() {
