@@ -12,6 +12,8 @@ networks:
 
 services:
   auth_service:
+    env_file:
+      - path: ./prod.env
     build: ./apps/keycloak
     container_name: auth_service
     volumes:
@@ -30,9 +32,9 @@ services:
       KC_HOSTNAME: ${KC_HOSTNAME}
       PROXY_ADDRESS_FORWARDING: true
 
-      GF_URL: ${GF_HOSTNAME}:${GF_SERVER_HTTP_PORT}
-      GF_ADMIN_USERNAME: ${GF_ADMIN_USERNAME}
-      GF_ADMIN_PASSWORD: ${GF_ADMIN_PASSWORD}
+      # GF_URL: ${GF_HOSTNAME}:${GF_SERVER_HTTP_PORT}
+      # GF_ADMIN_USERNAME: ${GF_ADMIN_USERNAME}
+      # GF_ADMIN_PASSWORD: ${GF_ADMIN_PASSWORD}
 
       KC_DB: postgres
       KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak
@@ -58,6 +60,8 @@ services:
     container_name: postgres
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    env_file:
+      - path: ./prod.env
     environment:
       POSTGRES_DB: keycloak
       POSTGRES_USER: ${POSTGRES_USER}
@@ -69,6 +73,8 @@ services:
     image: mongo:latest
     container_name: mongo
     restart: always
+    env_file:
+      - path: ./prod.env
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGODB_USER}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGODB_PASSWORD}
@@ -76,15 +82,34 @@ services:
       - "27017:27017"
     volumes:
       - mongo-data:/data/db
+    networks:
+      replication_network:
 
   redis:
     image: 'bitnami/redis:7.0.15'
     container_name: redis
+    env_file:
+      - path: ./prod.env
+    networks:
+      replication_network:
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
     restart: always
     ports:
       - "6379:6379"
+
+  app:
+    build: .
+    container_name: shorten-url-app
+    env_file:
+      - path: ./prod.env
+    depends_on:
+      - mongo
+    networks:
+      replication_network:
+    ports:
+      - 3000:3000
+      - 9229:9229
 
   # nestjs as backend
   # debug mode is not working between docker and nx, checkout this in the feature.

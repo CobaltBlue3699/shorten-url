@@ -5,7 +5,7 @@ services:
     restart: always
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     environment:
       - DEV_PLATFORM=DOCKER
     # volumes: (use docker-compose watch instead

@@ -14,6 +14,7 @@ export class IpGeolocationService implements OnModuleInit {
 
   geoCollectionName!: string;
   geoTempCollectionName!: string;
+  dir = './temp'
 
   constructor(
     @InjectModel(GeoIp.name) private geoIpModel: Model<GeoIp>,
@@ -41,6 +42,10 @@ export class IpGeolocationService implements OnModuleInit {
     this.logger.debug('Downloading IP Geolocation CSV...');
     return new Promise((resolve, reject) => {
       try {
+        if (!fs.existsSync(this.dir)){
+          this.logger.debug('generate temp folder to save ip data...')
+          fs.mkdirSync(this.dir, { recursive: true });
+        }
         lastValueFrom(
           this.http.get(
             'https://raw.githubusercontent.com/sapics/ip-location-db/main/geo-whois-asn-country/geo-whois-asn-country-ipv4.csv',
@@ -49,7 +54,7 @@ export class IpGeolocationService implements OnModuleInit {
             }
           )
         ).then((response) => {
-          const file = fs.createWriteStream('./temp/geo-whois-asn-country-ipv4.csv', { flags: 'w', encoding: 'utf-8' });
+          const file = fs.createWriteStream(`${this.dir}/geo-whois-asn-country-ipv4.csv`, { flags: 'w', encoding: 'utf-8' });
           response.data.pipe(file);
 
           file.on('finish', () => {
@@ -59,7 +64,7 @@ export class IpGeolocationService implements OnModuleInit {
           });
         });
       } catch (error) {
-        fs.unlinkSync('./temp/geo-whois-asn-country-ipv4.csv');
+        fs.unlinkSync(`${this.dir}/geo-whois-asn-country-ipv4.csv`);
         this.logger.error('Error downloading CSV file', error.message);
         reject();
       }
@@ -70,7 +75,7 @@ export class IpGeolocationService implements OnModuleInit {
     return new Promise((resolve, reject) => {
       try {
         const results = [];
-        fs.createReadStream('./temp/geo-whois-asn-country-ipv4.csv')
+        fs.createReadStream(`${this.dir}/geo-whois-asn-country-ipv4.csv`)
           .pipe(csvParser(['ipStart', 'ipEnd', 'countryCode']))
           .on('data', (data) => {
             const { ipStart, ipEnd, countryCode } = data;

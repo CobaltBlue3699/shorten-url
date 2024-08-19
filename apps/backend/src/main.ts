@@ -9,7 +9,6 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app/app.module';
 import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
-import { readFileSync } from 'fs';
 
 // if (process.env.NODE_ENV != 'production') {
 //   // keycloak connect library didn't procide a way to pass https Agent during api interaction

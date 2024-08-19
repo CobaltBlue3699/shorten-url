@@ -1,12 +1,15 @@
-FROM node:20.14.0
-
-WORKDIR /app
-
-# RUN npm install -g nx
-# RUN npm install -g @nrwl/schematics
-
+FROM node:20.14.0-alpine AS builder
+WORKDIR /opt/app
+COPY package*.json ./
+RUN npm install --only=development --silent
 COPY . .
+RUN npm run build
 
-RUN npm i
-
-# CMD ["npm", "run", "start"]
+FROM node:20.14.0-alpine
+WORKDIR /opt/app
+COPY --from=builder /opt/app/dist/apps/ ./shorten-url
+COPY package*.json ./
+RUN npm install --production --silent
+RUN npm install -g pm2@latest
+# RUN npm install express
+ENTRYPOINT ["pm2-runtime","shorten-url/backend/main.js"]

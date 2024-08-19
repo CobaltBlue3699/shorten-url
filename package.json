@@ -3,12 +3,11 @@
   "version": "0.0.1-0",
   "license": "MIT",
   "scripts": {
-    "prepare": "npm run build",
     "prepublishOnly": "npm test && npm run lint",
     "version": "npm run format",
     "preversion": "npm run lint",
     "postversion": "git push && git push --tags",
-    "build": "npx nx build frontend && nx build backend && echo 'build completed!'",
+    "build": "npx nx build frontend --prod && nx build backend --prod && echo 'build completed!'",
     "test": "npx nx test frontend && nx test backend && echo 'testing complete!'",
     "e2e:f": "nx e2e frontend-e2e",
     "e2e:b": "nx e2e backend-e2e",

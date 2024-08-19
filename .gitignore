@@ -10,6 +10,7 @@ shorten-url-realm.json
 # dependencies
 node_modules
 .env
+prod.env
 
 # IDEs and editors
 /.idea
