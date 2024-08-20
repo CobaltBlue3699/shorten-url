@@ -17,7 +17,12 @@
           <div class="h-full mr-2">
             <img [src]="url.icon" loading="lazy" [alt]="url.title" style="height: 32px; width: 32px; min-width: 32px; flex: 0 0 32px;" />
           </div>
-          <div class="h-full text-left w-full">
+          <div class="h-full text-left"
+            [class]="{
+              'w-[calc(82%-146px)]': url.image,
+              'w-full': !url.image
+            }"
+          >
             <h3 class="single-ellipsis m-0 font-semibold text-black-400">{{ url.shortUrl }}</h3>
             <p class="single-ellipsis m-0 text-green-800">{{ url.originalUrl }}</p>
             <p class="single-ellipsis m-0">{{ url.title }}</p>
@@ -28,7 +33,7 @@
           <div class="w-[15%] h-full card text-right">
             <div class="menu relative cursor-pointer" (click)="menu.toggle($event)">
               <div class="pi pi-ellipsis-v"></div>
-              <p-menu #menu [model]="itemMenus()[url.key]" [popup]="true" styleClass="absolute top-[100%] left-[-70%] z-10"/>
+              <p-menu #menu [model]="itemMenus()[url.key]" [popup]="true" styleClass="absolute top-[80%] left-[-40%] z-10"/>
             </div>
           </div>
         </div>

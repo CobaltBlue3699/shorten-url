@@ -19,28 +19,28 @@ import helmet from 'helmet';
 
 // console.log(process.env)
 
-const isProduction = process.env.NODE_ENV !== 'development';
+// const isProduction = process.env.NODE_ENV !== 'development';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const appModule = app.get(AppModule);
   // const globalPrefix = 'api';
   // app.setGlobalPrefix(globalPrefix);
-  // app.use(helmet());
-  if (isProduction) {
-    app.use(
-      helmet({
-        contentSecurityPolicy: {
-          directives: {
-            defaultSrc: ["'self'"],
-            scriptSrc: ["'self'"],
-            objectSrc: ["'none'"],
-            upgradeInsecureRequests: [], // Applies in environments where HTTPS isn't strictly enforced
-          },
-        },
-      })
-    );
-  }
+  // not ready for production, not yet
+  // if (isProduction) {
+  //   app.use(
+  //     helmet({
+  //       contentSecurityPolicy: {
+  //         directives: {
+  //           defaultSrc: ["'self'"],
+  //           scriptSrc: ["'self'"],
+  //           objectSrc: ["'none'"],
+  //           upgradeInsecureRequests: [], // Applies in environments where HTTPS isn't strictly enforced
+  //         },
+  //       },
+  //     })
+  //   );
+  // }
 
   appModule.configureSwagger(app);
   app.use(cookieParser());
