@@ -25,15 +25,15 @@ https://github.com/CobaltBlue3699/shorten-url.git
 5. enter your google client id and client secret to `apps/keycloak/shorten-url-realm.json`  
 <img src="./docs/replaceid.png" />  
 <img src="./docs/replacesecret.png" />  
-6. start relying party by using docker-compose
-```
-docker-compose up -d
-```
-7. run command `npm i` to install dependencies
-8. run command `npm start:f` to start developing frontend project
+6. start relying party by using docker-compose  
+```  
+docker-compose up -d  
+```  
+7. run command `npm i` to install dependencies  
+8. run command `npm start:f` to start developing frontend project  
 8. run command `npm start:b` to start developing backend project  
-10. open `http://{your localhost}:3000` with broswer, have fun
-11. default Swagger API url is `http://0.0.0.0:3000/docs`
+10. open `http://{your localhost}:3000` with broswer, have fun  
+11. default Swagger API url is `http://0.0.0.0:3000/docs`  
 
 ## TODOs
 - [X] validate input url format
