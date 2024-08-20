@@ -22,13 +22,8 @@ https://github.com/CobaltBlue3699/shorten-url.git
 2. copy `.env.example` to `.env`  
 3. create your own google oauth account, see <a href="https://developers.google.com/identity/protocols/oauth2?hl=zh-tw">this</a>  
 4. modify `.env` to your own settings.  
-5. enter your google client id and client secret to `apps/keycloak/shorten-url-realm.json`  
-<img src="./docs/replaceid.png" />  
-<img src="./docs/replacesecret.png" />  
-6. start relying party by using docker-compose  
-```  
-docker-compose up -d  
-```  
+5. enter your google client id and client secret to `apps/keycloak/shorten-url-realm.json`  <img src="./docs/replaceid.png" />  <img src="./docs/replacesecret.png" />  
+6. start relying party by using docker-compose `docker-compose up -d`    
 7. run command `npm i` to install dependencies  
 8. run command `npm start:f` to start developing frontend project  
 8. run command `npm start:b` to start developing backend project  
