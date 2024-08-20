@@ -17,7 +17,7 @@
 ## Quick Start
 1. clone this project
 ```
-https://github.com/CobaltBlue3699/shorten-url.git
+git clone https://github.com/CobaltBlue3699/shorten-url.git
 ```
 2. copy `.env.example` to `.env`  
 3. create your own google oauth account, see <a href="https://developers.google.com/identity/protocols/oauth2?hl=zh-tw">this</a>  
