@@ -1,11 +1,15 @@
 # Shorten URL - URL Shortening Service
 
 <p align="center">
-  <a href="./docs/shorturl-demo.mp4" target="_blank">
-    <img src="./docs/demo.png" width="700px">
-    <br>
-    Live Demo
-  </a>
+  
+
+https://github.com/user-attachments/assets/febd319a-30cb-4bb0-bb7c-c65b5d6dee52
+
+
+https://github.com/user-attachments/assets/18407ccc-e531-4e54-86b5-87fc3794b82a
+
+
+
 </p>
 
 <p align="center">An url shorten web service written by Nestjs and Angular.</p>
