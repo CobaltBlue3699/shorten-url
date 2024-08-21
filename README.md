@@ -39,9 +39,11 @@ git clone https://github.com/CobaltBlue3699/shorten-url.git
   - [X] Swagger for api management  
   - [X] statistics short url request usage, etc country, device, daily count...  
     - [X] writting cron job to daily update ip geolocation  
+    - [X] enhance query efficiency by stored ip address as numerical ranges
     - [X] using redis to queueing api while gathering statistics (improve performance)  
   - [X] using redis to cache short url while url redirecting
   - [X] pagination urls api
+  - [ ] gather user device statistics
   - [ ] custom short url  
   - [ ] SSL?  
   - [ ] Admin account?  
@@ -51,5 +53,6 @@ git clone https://github.com/CobaltBlue3699/shorten-url.git
   - [ ] qrcode support?  
 
 ## Reference
+- [Custom IP Address to Country Mapping Functionality: Design and Considerations](./docs/Ip-to-country.md)
 - [知乎-短 URL 系统是怎么设计的？](https://www.zhihu.com/question/29270034)
 - [GitHub/Ourls](https://github.com/takashiki/Ourls)
