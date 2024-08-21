@@ -1,7 +1,5 @@
 <h1>Custom IP Address to Country Mapping Functionality</h1>
 
----
-
 <h3>Background and Requirements</h3>
 
 In building a URL shortening service, tracking the geographic location of users is critical for analyzing traffic sources and user behavior. To achieve this, we implemented a custom module that maps IP addresses to specific countries or regions.  
