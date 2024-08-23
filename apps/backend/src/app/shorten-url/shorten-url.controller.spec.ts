@@ -1,16 +1,22 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ShortenUrlController } from './shorten-url.controller';
 import { ShortenUrlService } from './shorten-url.service';
-import { Role } from '../core/role.enum';
-import { AuthenticatedUser, JwtUser } from '@shorten-url/keycloak-connect';
+import { JwtUser } from '@shorten-url/keycloak-connect';
 import { RandomStrategy, SHORTEN_STRATEGY } from './shorten-strategy';
 import { HttpService } from '@nestjs/axios';
+import { getQueueToken } from '@nestjs/bull';
 
 jest.mock('./shorten-url.service');
 
 const mockHttpService = {
   get: jest.fn(),
   post: jest.fn(),
+};
+
+// Ref: https://stackoverflow.com/a/68253049/10779988
+export const mockBullQueue = {
+  add: jest.fn(),
+  process: jest.fn(),
 };
 
 describe('ShortenUrlController', () => {
@@ -58,7 +64,7 @@ describe('ShortenUrlController', () => {
       providers: [
         {
           provide: SHORTEN_STRATEGY,
-          useClass: RandomStrategy
+          useClass: RandomStrategy,
         },
         {
           provide: ShortenUrlService,
@@ -67,6 +73,14 @@ describe('ShortenUrlController', () => {
         {
           provide: HttpService,
           useValue: mockHttpService,
+        },
+        {
+          provide: getQueueToken('usage-count'),
+          useValue: mockBullQueue,
+        },
+        {
+          provide: getQueueToken('del-stat'),
+          useValue: mockBullQueue,
         },
       ],
     }).compile();
@@ -82,39 +96,16 @@ describe('ShortenUrlController', () => {
   describe('getUserShortUrls', () => {
     it('should return user short URLs', async () => {
       const mockUrls = [{ shortUrl: 'abc1234', originalUrl: 'https://example.com' }];
-      mockShortUrlService.getUserShortUrls.mockResolvedValue(mockUrls);
+      mockShortUrlService.getUserShortUrls.mockResolvedValue({
+        pageNo: 1,
+        pageSize: 10,
+        data: mockUrls,
+      });
 
       const result = await controller.getUserShortUrls(mockUser, 1, 10);
 
-      expect(result).toEqual(mockUrls);
-      expect(service.getUserShortUrls).toHaveBeenCalledWith(mockUser.sub);
+      expect(result.data).toEqual(mockUrls);
+      expect(service.getUserShortUrls).toHaveBeenCalledWith(mockUser.sub, 1, 10);
     });
   });
-
-  // describe('redirect', () => {
-  //   it('should redirect to the original URL', async () => {
-  //     const res = { redirect: jest.fn() };
-  //     const mockUrl = { shortUrl: 'abc1234', originalUrl: 'https://example.com' };
-  //     mockShortUrlService.getShortUrl.mockResolvedValue(mockUrl);
-  //     mockShortUrlService.updateShortUrl.mockResolvedValue({ ...mockUrl, usageCount: 1 });
-
-  //     await controller.redirect(res, 'abc1234');
-
-  //     expect(service.getShortUrl).toHaveBeenCalledWith('abc1234');
-  //     expect(service.updateUsageCount).toHaveBeenCalledWith(mockUrl.shortUrl);
-  //     expect(res.redirect).toHaveBeenCalledWith('https://example.com');
-  //   });
-  // });
-
-  // describe('process', () => {
-  //   it('should create a short URL', async () => {
-  //     const mockCreatedUrl = { shortUrl: 'abc1234', originalUrl: 'https://example.com' };
-  //     mockShortUrlService.createShortUrl.mockResolvedValue(mockCreatedUrl);
-
-  //     const result = await controller.process(mockUser, 'https://example.com');
-
-  //     expect(result).toEqual(mockCreatedUrl);
-  //     expect(service.createShortUrl).toHaveBeenCalledWith('https://example.com', mockUser.sub);
-  //   });
-  // });
 });

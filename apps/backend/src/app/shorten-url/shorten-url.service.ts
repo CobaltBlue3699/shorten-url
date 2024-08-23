@@ -14,7 +14,6 @@ import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
 
 @Injectable()
 export class ShortenUrlService {
-
   constructor(
     @Inject()
     private httpService: HttpService,
@@ -23,7 +22,7 @@ export class ShortenUrlService {
     @InjectModel(ShortUrl.name) private shortUrlModel: Model<ShortUrl>,
     @InjectModel(DailyUsageStat.name) private readonly dailyUsageStatModel: Model<DailyUsageStat>,
     @InjectModel(CountryUsageStat.name) private readonly countryUsageStatModel: Model<CountryUsageStat>,
-    @Inject(CACHE_MANAGER) private cacheManager: Cache,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache
   ) {
     // console.log(this.shortenStrategy.calculate('123123'))
   }
@@ -37,10 +36,10 @@ export class ShortenUrlService {
    * @returns hashed key
    */
   async generatorKey(url: string) {
-    return await this.shortenStrategy.calculate(url)
+    return await this.shortenStrategy.calculate(url);
   }
 
-  private async retry<T>(fn: () => Promise<T>, retries = 3, delay = 1000): Promise<T> {
+  async retry<T>(fn: () => Promise<T>, retries = 3, delay = 1000): Promise<T> {
     let attempts = 0;
     while (attempts < retries) {
       try {
@@ -50,7 +49,7 @@ export class ShortenUrlService {
         if (attempts === retries) {
           throw error;
         }
-        await new Promise(resolve => setTimeout(resolve, delay));
+        await new Promise((resolve) => setTimeout(resolve, delay));
       }
     }
   }
@@ -58,19 +57,15 @@ export class ShortenUrlService {
   async updateDailyUsageCount(key: string): Promise<void> {
     const date = moment().format('YYYY-MM-DD');
     // console.log('bull goooooooooooooooo')
-    await this.dailyUsageStatModel.findOneAndUpdate(
-      { key, date },
-      { $inc: { count: 1 } },
-      { upsert: true, new: true },
-    ).exec()
+    await this.dailyUsageStatModel
+      .findOneAndUpdate({ key, date }, { $inc: { count: 1 } }, { upsert: true, new: true })
+      .exec();
   }
 
   async updateCountryUsageCount(key: string, countryCode: string): Promise<void> {
-    await this.countryUsageStatModel.findOneAndUpdate(
-      { key, countryCode },
-      { $inc: { count: 1 } },
-      { upsert: true, new: true },
-    ).exec()
+    await this.countryUsageStatModel
+      .findOneAndUpdate({ key, countryCode }, { $inc: { count: 1 } }, { upsert: true, new: true })
+      .exec();
   }
 
   async fetchUrlPreview(url: string) {
@@ -80,15 +75,16 @@ export class ShortenUrlService {
 
       // 提取Open Graph信息
       const title = $('meta[property="og:title"]').attr('content') || $('title').text();
-      const description = $('meta[property="og:description"]').attr('content') || $('meta[name="description"]').attr('content') || '';
+      const description =
+        $('meta[property="og:description"]').attr('content') || $('meta[name="description"]').attr('content') || '';
       const image = $('meta[property="og:image"]').attr('content') || '';
 
       // 抓取 icon
       let icon = $('link[rel="icon"]').attr('href') || $('link[rel="shortcut icon"]').attr('href') || '';
       if (icon && !icon.startsWith('http')) {
-        icon = new URL(icon, url).href;  // 如果是相對路徑，轉換為絕對路徑
+        icon = new URL(icon, url).href; // 如果是相對路徑，轉換為絕對路徑
       } else if (!icon) {
-        icon = `${new URL(url).origin}/favicon.ico`;  // 如果沒有找到，使用默認的 /favicon.ico
+        icon = `${new URL(url).origin}/favicon.ico`; // 如果沒有找到，使用默認的 /favicon.ico
       }
 
       // 創建DOMPurify實例
@@ -103,7 +99,7 @@ export class ShortenUrlService {
         title: cleanTitle,
         description: cleanDescription,
         image,
-        icon
+        icon,
       };
     } catch (error) {
       if (error.response) {
@@ -131,23 +127,20 @@ export class ShortenUrlService {
   async createShortUrl(originalUrl: string, userId: string): Promise<ShortUrl> {
     const { title, description, image, icon } = await this.fetchUrlPreview(originalUrl);
     const key = await this.generatorKey(originalUrl);
-    return this.retry<ShortUrl>(() => this.shortUrlModel.create({ originalUrl, key, userId, title, description, image, icon }));
+    return this.retry<ShortUrl>(() =>
+      this.shortUrlModel.create({ originalUrl, key, userId, title, description, image, icon })
+    );
     // return newShortUrl.save();
   }
 
   async getUserShortUrls(userId: string, page = 1, limit = 10) {
     const skip = (page - 1) * limit;
-    const urls = await this.shortUrlModel
-      .find({ userId })
-      .skip(skip)
-      .limit(limit)
-      .sort({ createdAt: -1 })
-      .exec();
+    const urls = await this.shortUrlModel.find({ userId }).skip(skip).limit(limit).sort({ createdAt: -1 }).exec();
     return {
       pageNo: page,
       pageSize: urls.length,
-      data: urls
-    }
+      data: urls,
+    };
   }
 
   async getShortUrl(key: string): Promise<ShortUrl> {
@@ -165,28 +158,30 @@ export class ShortenUrlService {
   }
 
   async getShortUrlDeatils(key: string): Promise<ShortUrl> {
-    const resArr = await this.shortUrlModel.aggregate([
-      { $match: { key } },
-      {
-        $lookup: {
-          from: this.dailyUsageStatModel.collection.name, // Ensure this matches the actual collection name
-          localField: 'key',
-          foreignField: 'key',
-          as: 'dailyUsageStats',
-          pipeline: [
-            { $sort: { date: 1 } } // Sort usageStats by date in ascending order
-          ],
+    const resArr = await this.shortUrlModel
+      .aggregate([
+        { $match: { key } },
+        {
+          $lookup: {
+            from: this.dailyUsageStatModel.collection.name, // Ensure this matches the actual collection name
+            localField: 'key',
+            foreignField: 'key',
+            as: 'dailyUsageStats',
+            pipeline: [
+              { $sort: { date: 1 } }, // Sort usageStats by date in ascending order
+            ],
+          },
         },
-      },
-      {
-        $lookup: {
-          from: this.countryUsageStatModel.collection.name, // Ensure this matches the actual collection name
-          localField: 'key',
-          foreignField: 'key',
-          as: 'countryUsageStats',
+        {
+          $lookup: {
+            from: this.countryUsageStatModel.collection.name, // Ensure this matches the actual collection name
+            localField: 'key',
+            foreignField: 'key',
+            as: 'countryUsageStats',
+          },
         },
-      },
-    ]).exec()
+      ])
+      .exec();
     return (resArr && resArr.length) === 0 ? null : resArr[0];
   }
 
