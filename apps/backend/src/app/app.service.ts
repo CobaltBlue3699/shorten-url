@@ -14,7 +14,6 @@ export class AppConfigService {
   }
 
   getPort() {
-    return Number(this.configService.get('PORT')|| 443);
+    return Number(this.configService.get('PORT') || 443);
   }
-
 }

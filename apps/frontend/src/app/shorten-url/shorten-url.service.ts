@@ -5,49 +5,47 @@ import { Observable } from 'rxjs';
 export class Pagination<T> {
   pageNo = 1;
   pageSize = 10;
-  data!: T
+  data!: T;
 }
 
 export type DailyStat = {
   key: string;
   date: string;
   count: number;
-}
+};
 
 export type CountryStat = {
   key: string;
   countryCode: string;
   count: number;
-}
+};
 
 export type ShortUrl = {
-  createdAt: string,
-  description: string,
-  image: string,
-  originalUrl: string,
-  shortUrl: string,
-  key: string,
-  title: string,
-  updatedAt: string,
-  userId: string,
-  icon: string
-  __v: number
-  _id: string
-}
+  createdAt: string;
+  description: string;
+  image: string;
+  originalUrl: string;
+  shortUrl: string;
+  key: string;
+  title: string;
+  updatedAt: string;
+  userId: string;
+  icon: string;
+  __v: number;
+  _id: string;
+};
 
 export type ShortUrlDetails = ShortUrl & {
-  dailyUsageStats: DailyStat[],
-  countryUsageStats: CountryStat[]
-}
+  dailyUsageStats: DailyStat[];
+  countryUsageStats: CountryStat[];
+};
 
 export type ShortenUrlRequest = Pick<ShortUrl, 'originalUrl'>;
 
-
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ShortenUrlService {
-
   http = inject(HttpClient);
 
   generateShortUrl(req: ShortenUrlRequest): Observable<ShortUrl> {
@@ -58,21 +56,20 @@ export class ShortenUrlService {
     return this.http.get<Pagination<ShortUrlDetails[]>>('/urls', {
       params: {
         pageNo,
-        pageSize
-      }
+        pageSize,
+      },
     });
   }
 
   getUrlDetails(key: string) {
-    return this.http.get<ShortUrlDetails>(`/urls/${key}`)
+    return this.http.get<ShortUrlDetails>(`/urls/${key}`);
   }
 
   deleteUrl(key: string) {
-    return this.http.delete<ShortUrl>(`/urls/${key}`)
+    return this.http.delete<ShortUrl>(`/urls/${key}`);
   }
 
   // updateUrl(req: ShortenUrl): Observable<ShortenUrl> {
   //   return this.http.put<ShortenUrl>('/s', req);
   // }
-
 }

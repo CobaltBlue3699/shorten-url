@@ -51,12 +51,12 @@ export class MyUrlsComponent implements OnInit, OnDestroy {
             label: 'Analyze',
             icon: PrimeIcons.CHART_BAR,
             command: (event: any) => {
-              const btn = event.originalEvent.target.closest(".menu");
+              const btn = event.originalEvent.target.closest('.menu');
               setTimeout(() => {
                 btn.click();
-              })
+              });
               this.service.getUrlDetails(item.key).subscribe((res) => {
-                res.shortUrl = item.shortUrl
+                res.shortUrl = item.shortUrl;
                 this.analyzeUrl(res);
               });
             },
@@ -65,10 +65,10 @@ export class MyUrlsComponent implements OnInit, OnDestroy {
             label: 'Delete',
             icon: PrimeIcons.TRASH,
             command: (event: any) => {
-              const btn = event.originalEvent.target.closest(".menu");
+              const btn = event.originalEvent.target.closest('.menu');
               setTimeout(() => {
                 btn.click();
-              })
+              });
               this.deleteShortUrl(item).subscribe((res) => {
                 if (res) {
                   // delete success

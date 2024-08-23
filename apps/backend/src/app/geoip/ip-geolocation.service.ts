@@ -14,7 +14,7 @@ export class IpGeolocationService implements OnModuleInit {
 
   geoCollectionName!: string;
   geoTempCollectionName!: string;
-  dir = './temp'
+  dir = './temp';
 
   constructor(
     @InjectModel(GeoIp.name) private geoIpModel: Model<GeoIp>,
@@ -34,7 +34,8 @@ export class IpGeolocationService implements OnModuleInit {
     await this.renameAndBackupCollections();
   }
 
-  onModuleInit() { // for new environment
+  onModuleInit() {
+    // for new environment
     this.handleCron();
   }
 
@@ -42,8 +43,8 @@ export class IpGeolocationService implements OnModuleInit {
     this.logger.debug('Downloading IP Geolocation CSV...');
     return new Promise((resolve, reject) => {
       try {
-        if (!fs.existsSync(this.dir)){
-          this.logger.debug('generate temp folder to save ip data...')
+        if (!fs.existsSync(this.dir)) {
+          this.logger.debug('generate temp folder to save ip data...');
           fs.mkdirSync(this.dir, { recursive: true });
         }
         lastValueFrom(
@@ -54,7 +55,10 @@ export class IpGeolocationService implements OnModuleInit {
             }
           )
         ).then((response) => {
-          const file = fs.createWriteStream(`${this.dir}/geo-whois-asn-country-ipv4.csv`, { flags: 'w', encoding: 'utf-8' });
+          const file = fs.createWriteStream(`${this.dir}/geo-whois-asn-country-ipv4.csv`, {
+            flags: 'w',
+            encoding: 'utf-8',
+          });
           response.data.pipe(file);
 
           file.on('finish', () => {
@@ -103,7 +107,9 @@ export class IpGeolocationService implements OnModuleInit {
   async renameAndBackupCollections() {
     const connection = this.connection.db;
     const todayDate = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
-    await connection.renameCollection(this.geoCollectionName, `${this.geoCollectionName}_${todayDate}`, { dropTarget: true });
+    await connection.renameCollection(this.geoCollectionName, `${this.geoCollectionName}_${todayDate}`, {
+      dropTarget: true,
+    });
     this.logger.debug(`Renamed ${this.geoCollectionName} collection to ${this.geoCollectionName}_${todayDate}.`);
     await connection.renameCollection(this.geoTempCollectionName, this.geoCollectionName, { dropTarget: true });
     this.logger.debug(`Renamed ${this.geoTempCollectionName} to ${this.geoCollectionName} successfully.`);

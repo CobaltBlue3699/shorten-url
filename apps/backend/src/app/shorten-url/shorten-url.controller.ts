@@ -1,4 +1,17 @@
-import { Body, Controller, DefaultValuePipe, Delete, Get, Inject, Param, ParseIntPipe, Post, Query, Req, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  DefaultValuePipe,
+  Delete,
+  Get,
+  Inject,
+  Param,
+  ParseIntPipe,
+  Post,
+  Query,
+  Req,
+  Res,
+} from '@nestjs/common';
 import { ShortenUrlService } from './shorten-url.service';
 import { AuthenticatedUser, JwtUser, Roles, Unprotected } from '@shorten-url/keycloak-connect';
 import { Role } from '../core/role.enum';
@@ -26,7 +39,7 @@ export class ShortenUrlController {
   async getUserShortUrls(
     @AuthenticatedUser() user: JwtUser,
     @Query('pageNo', new DefaultValuePipe(1), ParseIntPipe) pageNo: number,
-    @Query('pageSize', new DefaultValuePipe(10), ParseIntPipe) pageSize: number,
+    @Query('pageSize', new DefaultValuePipe(10), ParseIntPipe) pageSize: number
   ) {
     return this.service.getUserShortUrls(user.sub, pageNo, pageSize);
   }
@@ -40,10 +53,7 @@ export class ShortenUrlController {
   })
   @ApiBearerAuth()
   @Roles({ roles: [Role.User] })
-  async getShortUrlDetails(
-    @AuthenticatedUser() user: JwtUser,
-    @Param('key') key: string,
-  ) {
+  async getShortUrlDetails(@AuthenticatedUser() user: JwtUser, @Param('key') key: string) {
     return await this.service.getShortUrlDeatils(key);
   }
 
@@ -66,12 +76,16 @@ export class ShortenUrlController {
         headers: req.headers,
         // Add any other needed properties here
       };
-      await this.usageCountQueue.add({ key, req: requestInfo }, {
-        removeOnComplete: true,
-        removeOnFail: true
-      });
+      await this.usageCountQueue.add(
+        { key, req: requestInfo },
+        {
+          removeOnComplete: true,
+          removeOnFail: true,
+        }
+      );
       res.redirect(shortUrl.originalUrl);
-    } else { // TODO: 404 page
+    } else {
+      // TODO: 404 page
       res.status(404).redirect(`/#/${key}`);
     }
   }
@@ -91,10 +105,13 @@ export class ShortenUrlController {
   async deleteShortUrl(@AuthenticatedUser() user: JwtUser, @Param('key') key: string) {
     const data = await this.service.deleteShortUrl(key, user.sub);
     if (data) {
-      this.delStatQueue.add({ key }, {
-        removeOnComplete: true,
-        removeOnFail: true
-      })
+      this.delStatQueue.add(
+        { key },
+        {
+          removeOnComplete: true,
+          removeOnFail: true,
+        }
+      );
     }
     return data;
   }

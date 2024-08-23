@@ -5,7 +5,7 @@ import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { ChartModule } from 'primeng/chart';
 import { TabViewModule } from 'primeng/tabview';
 import { DailyChartComponent } from './daily-chart.component';
-import { CountryChartComponent } from "./country-chart.component";
+import { CountryChartComponent } from './country-chart.component';
 
 @Component({
   selector: 'app-analyze-url',

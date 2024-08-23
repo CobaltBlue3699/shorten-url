@@ -8,8 +8,8 @@ export class UsageCountProcessor {
   constructor(private readonly shortenUrlService: ShortenUrlService, private readonly ipService: IpService) {}
 
   @Process()
-  async handleUpdateUsageCount(job: Job<{ key: string, req }>) {
-    const { key, req } = job.data
+  async handleUpdateUsageCount(job: Job<{ key: string; req }>) {
+    const { key, req } = job.data;
     await this.shortenUrlService.updateDailyUsageCount(key);
     const code = await this.ipService.getCountryByIp(req.ip);
     await this.shortenUrlService.updateCountryUsageCount(key, code);

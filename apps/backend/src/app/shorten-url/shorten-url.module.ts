@@ -5,7 +5,12 @@ import { RandomStrategy, SHORTEN_STRATEGY } from './shorten-strategy';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ShortUrl, ShortUrlSchema } from './schemas/shorten-url.schema';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { CountryUsageSchema, CountryUsageStat, DailyUsageStat, DailyUsageStatSchema } from './schemas/usage-state.schema';
+import {
+  CountryUsageSchema,
+  CountryUsageStat,
+  DailyUsageStat,
+  DailyUsageStatSchema,
+} from './schemas/usage-state.schema';
 import { BullModule } from '@nestjs/bull';
 import { UsageCountProcessor } from './usage-count.processor';
 import { DeleteStatProcessor } from './del-stat.processor';
@@ -68,7 +73,7 @@ import { DeleteStatProcessor } from './del-stat.processor';
       useClass: RandomStrategy,
     },
     UsageCountProcessor,
-    DeleteStatProcessor
+    DeleteStatProcessor,
   ],
 })
 export class ShortenUrlModule {}

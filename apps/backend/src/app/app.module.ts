@@ -61,18 +61,18 @@ console.log(__dirname);
           pass: configService.get('MONGODB_PASSWORD'),
           retryAttempts: configService.get('MONGODB_RETRY_ATTEMPTS'),
           retryDelay: configService.get('MONGODB_RETRY_DELAY'),
-        }
-      }
+        };
+      },
     }),
     BullModule.forRootAsync({
       imports: [ConfigModule],
       useFactory(configService: ConfigService) {
-          return {
-            redis: {
-              host: configService.get('REDIS_HOST'),
-              port: configService.get('REDIS_PORT'),
-            },
-          }
+        return {
+          redis: {
+            host: configService.get('REDIS_HOST'),
+            port: configService.get('REDIS_PORT'),
+          },
+        };
       },
       inject: [ConfigService],
     }),
@@ -86,7 +86,7 @@ console.log(__dirname);
           host: configService.get<string>('REDIS_HOST'),
           port: configService.get<number>('REDIS_PORT'),
           ttl: Number(configService.get<number>('CACHE_TTL')), // Time to live in seconds
-        }
+        };
       },
       inject: [ConfigService],
     }),
@@ -119,12 +119,11 @@ console.log(__dirname);
     },
     {
       provide: APP_INTERCEPTOR,
-      useClass: ResponseInterceptor
+      useClass: ResponseInterceptor,
     },
   ],
 })
 export class AppModule implements NestModule {
-
   configureSwagger(app: any) {
     const config = new DocumentBuilder()
       .setTitle('Short URL API')
@@ -138,8 +137,6 @@ export class AppModule implements NestModule {
   }
 
   configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(StaticMiddleware)
-      .forRoutes('*');
+    consumer.apply(StaticMiddleware).forRoutes('*');
   }
 }

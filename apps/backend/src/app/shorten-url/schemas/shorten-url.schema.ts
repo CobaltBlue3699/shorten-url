@@ -13,7 +13,7 @@ export class ShortUrl extends Document {
   key!: string;
 
   @Prop({ required: true, index: true })
-  @ApiProperty({ description: 'The user ID', example: 'user-123', })
+  @ApiProperty({ description: 'The user ID', example: 'user-123' })
   userId!: string;
 
   @Prop()
@@ -25,11 +25,17 @@ export class ShortUrl extends Document {
   description!: string;
 
   @Prop()
-  @ApiPropertyOptional({ description: 'The image associated with the original URL', example: 'https://www.example.com/img/example.png' })
+  @ApiPropertyOptional({
+    description: 'The image associated with the original URL',
+    example: 'https://www.example.com/img/example.png',
+  })
   image!: string;
 
   @Prop()
-  @ApiPropertyOptional({ description: 'The icon associated with the original URL', example: 'https://www.example.com/img/icon/example.png' })
+  @ApiPropertyOptional({
+    description: 'The icon associated with the original URL',
+    example: 'https://www.example.com/img/icon/example.png',
+  })
   icon!: string;
 }
 

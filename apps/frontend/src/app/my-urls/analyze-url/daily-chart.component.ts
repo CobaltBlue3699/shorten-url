@@ -84,5 +84,4 @@ export class DailyChartComponent implements OnInit {
       },
     };
   }
-
 }

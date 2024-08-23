@@ -7,18 +7,17 @@ export type User = {
   email_verified: boolean;
   family_name: string;
   given_name: string;
-}
+};
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class UserService {
-
   httpClient = inject(HttpClient);
   private _user = signal({} as User);
 
   constructor() {
-    this.getUser()
+    this.getUser();
   }
 
   get user() {
@@ -27,14 +26,13 @@ export class UserService {
 
   getUser() {
     this.httpClient.get<User>(`/auth/me`).subscribe((res) => {
-      this._user.set(res)
-    })
+      this._user.set(res);
+    });
   }
 
   logout(): void {
     this.httpClient.post('/auth/logout', {}).subscribe(() => {
       location.href = '';
-    })
+    });
   }
-
 }

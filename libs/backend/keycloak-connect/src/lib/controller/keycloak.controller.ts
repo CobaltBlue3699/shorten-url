@@ -21,7 +21,6 @@ type LogoutRequestBody = {
 
 @Controller(`/auth`)
 export class KeycloakController {
-
   private cookieKey: string;
   private refreshKey: string;
 
@@ -86,7 +85,8 @@ export class KeycloakController {
     @Res() res: any,
     @Query('code') code: string,
     @Optional()
-    @Query('state') state: string
+    @Query('state')
+    state: string
   ) {
     const { host } = req.headers;
     const redirectURL = `${req.protocol}://${host}${req.path}`;
@@ -121,7 +121,7 @@ export class KeycloakController {
     await this.authService.logout(refreshTokenJWT);
     res.json({
       status: 200,
-      message: 'logout!'
-    })
+      message: 'logout!',
+    });
   }
 }

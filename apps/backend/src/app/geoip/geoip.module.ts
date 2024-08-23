@@ -14,8 +14,8 @@ import { IpService } from './ip.service';
       },
       {
         name: GeoIpTemp.name,
-        useFactory: () => GeoIpTempSchema
-      }
+        useFactory: () => GeoIpTempSchema,
+      },
     ]),
     // BullModule.registerQueue({
     //   name: 'usage-count',
@@ -27,6 +27,6 @@ import { IpService } from './ip.service';
     IpGeolocationService,
     // DeleteStatProcessor
   ],
-  exports: [IpService]
+  exports: [IpService],
 })
 export class GeoIpModule {}

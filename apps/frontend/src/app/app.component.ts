@@ -21,8 +21,8 @@ export class AppComponent implements OnInit, OnDestroy {
 
   router$ = inject(Router).events.pipe(
     takeUntil(this.destory$),
-    filter(e => e instanceof NavigationEnd),
-  )
+    filter((e) => e instanceof NavigationEnd)
+  );
   activatedRoute = inject(ActivatedRoute);
 
   ngOnInit(): void {

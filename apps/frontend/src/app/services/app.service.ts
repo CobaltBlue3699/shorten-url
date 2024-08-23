@@ -6,18 +6,17 @@ export type AppInfo = {
   protocol: string;
   port: number;
   baseURL: string;
-}
+};
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AppInfoService {
-
   httpClient = inject(HttpClient);
   private _appInfo = signal({} as AppInfo);
 
   constructor() {
-    this.getAppInfo()
+    this.getAppInfo();
   }
 
   get appInfo() {
@@ -26,8 +25,7 @@ export class AppInfoService {
 
   getAppInfo() {
     this.httpClient.get<AppInfo>(`/config`).subscribe((res) => {
-      this._appInfo.set(res)
-    })
+      this._appInfo.set(res);
+    });
   }
-
 }

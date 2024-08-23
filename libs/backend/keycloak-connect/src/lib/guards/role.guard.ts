@@ -1,12 +1,7 @@
 import { CanActivate, ExecutionContext, Inject, Injectable, Logger } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import * as KeycloakConnect from 'keycloak-connect';
-import {
-  KEYCLOAK_CONNECT_OPTIONS,
-  KEYCLOAK_INSTANCE,
-  RoleMatchingMode,
-  RoleMerge,
-} from '../constants';
+import { KEYCLOAK_CONNECT_OPTIONS, KEYCLOAK_INSTANCE, RoleMatchingMode, RoleMerge } from '../constants';
 import { META_ROLES } from '../decorators/roles.decorator';
 import { KeycloakConnectOptions } from '../interface/keycloak-connect-options.interface';
 import { RoleDecoratorOptionsInterface } from '../interface/role-decorator-options.interface';

@@ -13,14 +13,16 @@ export interface ShortenStrategy {
 }
 
 export class RandomStrategy implements ShortenStrategy {
-
-  range = '0123456789abcdefghijklmnopurstuvwxyzABCDEFGFIJKLMNOPURSTUVWXYZ'
+  range = '0123456789abcdefghijklmnopurstuvwxyzABCDEFGFIJKLMNOPURSTUVWXYZ';
 
   async calculate(url: string) {
     // console.log('RandomStrategy')
-    return new Array(7).fill(0).map(() => {
-      return this.range[this.getRandomInt(0, 61)];
-    }).join('')
+    return new Array(7)
+      .fill(0)
+      .map(() => {
+        return this.range[this.getRandomInt(0, 61)];
+      })
+      .join('');
   }
 
   getRandomInt(min, max) {

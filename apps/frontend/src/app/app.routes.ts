@@ -1,6 +1,5 @@
 import { Route } from '@angular/router';
 
-
 export const appRoutes: Route[] = [
   {
     path: 'dashboard',
@@ -11,12 +10,12 @@ export const appRoutes: Route[] = [
       showSidebar: false,
       showFooter: false,
     },
-    loadChildren: () => import('./dashboard/dashboard.router').then(mod => mod.DASHBOARD_ROUTES)
+    loadChildren: () => import('./dashboard/dashboard.router').then((mod) => mod.DASHBOARD_ROUTES),
   },
   {
     path: ``,
     pathMatch: 'full',
-    redirectTo: '/dashboard/shorten-url'
+    redirectTo: '/dashboard/shorten-url',
   },
   { path: '**', redirectTo: '' },
 ];

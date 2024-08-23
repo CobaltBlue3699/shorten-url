@@ -1,9 +1,5 @@
 import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
-import {
-  provideRouter,
-  withDebugTracing,
-  withHashLocation,
-} from '@angular/router';
+import { provideRouter, withDebugTracing, withHashLocation } from '@angular/router';
 import { appRoutes } from './app.routes';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { httpErrorInterceptor } from './intercepters/http-error.intercepter';
@@ -19,9 +15,7 @@ export const appConfig: ApplicationConfig = {
       withHashLocation(),
       withDebugTracing()
     ),
-    provideHttpClient(
-      withInterceptors([httpErrorInterceptor, apiInterceptor]),
-    ),
-    AppInfoService
+    provideHttpClient(withInterceptors([httpErrorInterceptor, apiInterceptor])),
+    AppInfoService,
   ],
 };
