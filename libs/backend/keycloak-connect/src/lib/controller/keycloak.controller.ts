@@ -1,23 +1,9 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Req, Res, Post, Inject, Query, Optional } from '@nestjs/common';
-// import { Request, Response } from 'express';
+import { Controller, Get, HttpCode, HttpStatus, Req, Res, Post, Inject, Query, Optional } from '@nestjs/common';
 import { Public } from '../decorators/public.decorator';
 import { KEYCLOAK_CONNECT_OPTIONS, KEYCLOAK_COOKIE_DEFAULT, KEYCLOAK_REFRESH_COOKIE_DEFAULT } from '../constants';
 import { KeycloakConnectOptions } from '../keycloak-connect.module';
 import { AuthService } from './../services/auth.service';
 import { AuthenticatedUser, JwtUser } from './../decorators/authenticated-user.decorator';
-
-type LoginRequestBody = {
-  username: string;
-  password: string;
-};
-
-type RefreshTokenRequestBody = {
-  refresh_token: string;
-};
-
-type LogoutRequestBody = {
-  refresh_token: string;
-};
 
 @Controller(`/auth`)
 export class KeycloakController {
@@ -32,27 +18,10 @@ export class KeycloakController {
     this.refreshKey = this.opts.refreshCookieKey || KEYCLOAK_REFRESH_COOKIE_DEFAULT;
   }
 
-  // @Post('/login')
-  // @HttpCode(HttpStatus.OK)
-  // login(@Body() body: LoginRequestBody) {
-  //   const { username, password } = body;
-
-  //   return this.keycloak.login(username, password);
-  // }
-
-  // @Post('/reg')
-  // @HttpCode(HttpStatus.OK)
-  // registration(@Body() body: LoginRequestBody) {
-  //   const { username, password } = body;
-
-  //   return this.keycloak.login(username, password);
-  // }
-
   @Get('/login')
   @Public()
-  redirectToLoginPage(@Req() req: any, @Res() res: any, @AuthenticatedUser() user: JwtUser) {
-    if (user) {
-      // already login
+  redirectToLoginPage(@Req() req: any, @Res() res: any, @AuthenticatedUser() user: JwtUser | null) {
+    if (user) { // already login
       res.redirect(`/`);
     } else {
       const { state } = req.query;
@@ -100,17 +69,8 @@ export class KeycloakController {
       httpOnly: true,
       secure: process.env['NODE_ENV'] === 'production',
     });
-    // res.cookie(refreshKey, `${resp.token_type} ${resp.refresh_token}`);
     res.redirect(`/`);
   }
-
-  // @Post('/refresh')
-  // @HttpCode(HttpStatus.OK)
-  // refreshToken(@Body() body: RefreshTokenRequestBody) {
-  //   const { refresh_token: refreshToken } = body;
-
-  //   return this.keycloak.refreshToken(refreshToken);
-  // }
 
   @Post('/logout')
   @HttpCode(HttpStatus.OK)
