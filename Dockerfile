@@ -11,5 +11,7 @@ COPY --from=builder /opt/app/dist/apps/ ./shorten-url
 COPY package*.json ./
 RUN npm install --production --silent
 RUN npm install -g pm2@latest
+
+EXPOSE 3000
 # RUN npm install express
 ENTRYPOINT ["pm2-runtime","shorten-url/backend/main.js"]

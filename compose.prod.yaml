@@ -1,0 +1,142 @@
+version: '3.6'
+
+x-logging: &logging
+  driver: "json-file"
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+networks:
+  replication_network:
+    driver: bridge
+
+services:
+
+  nginx:
+    build: ./nginx
+    container_name: nginx
+    depends_on:
+      - app
+      - auth_service
+    # volumes:
+    #   - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    #   - ./nginx/ssl:/etc/nginx/ssl:ro
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      replication_network:
+
+  auth_service:
+    build: ./apps/keycloak
+    container_name: auth_service
+    env_file:
+      - path: ./prod.env
+    volumes:
+      - './apps/keycloak/themes:/opt/keycloak/themes/my-theme'
+    environment:
+      KC_HOSTNAME_STRICT: false
+      KC_HOSTNAME_STRICT_HTTPS: false
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+      KEYCLOAK_USER: ${KEYCLOAK_ADMIN}
+      KEYCLOAK_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+      KC_DB_USERNAME: ${POSTGRES_USER}
+      KC_DB_PASSWORD: ${POSTGRES_PASSWORD}
+      KC_HEALTH_ENABLED: true
+      KC_METRICS_ENABLED: true
+      KC_HOSTNAME: ${KC_HOSTNAME}
+      PROXY_ADDRESS_FORWARDING: true
+      KC_HTTP_PORT: 80
+      KC_HTTPS_PORT: 443
+
+      # GF_URL: ${GF_HOSTNAME}:${GF_SERVER_HTTP_PORT}
+      # GF_ADMIN_USERNAME: ${GF_ADMIN_USERNAME}
+      # GF_ADMIN_PASSWORD: ${GF_ADMIN_PASSWORD}
+
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak
+      KC_LOG_LEVEL: ${KC_LOG_LEVEL}
+    logging: *logging
+    networks:
+      replication_network:
+        aliases:
+          - ${KC_HOSTNAME}
+
+    # command: -v start --optimized
+    command: ["start-dev", "--import-realm"]
+    depends_on:
+      - postgres
+    ports:
+      # http
+      - 8080:80
+      # https
+      - 8443:443
+      # healthckeck
+      - 9000:9000
+
+  postgres:
+    image: postgres:16.3
+    container_name: postgres
+    env_file:
+      - path: ./prod.env
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    networks:
+      replication_network:
+
+  mongo:
+    image: mongo:latest
+    container_name: mongo
+    env_file:
+      - path: ./prod.env
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGODB_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGODB_PASSWORD}
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      replication_network:
+
+  redis:
+    image: 'bitnami/redis:7.0.15'
+    container_name: redis
+    env_file:
+      - path: ./prod.env
+    networks:
+      replication_network:
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    restart: always
+    ports:
+      - "6379:6379"
+
+  app:
+    build: .
+    container_name: shorten-url-app
+    env_file:
+      - path: ./prod.env
+    depends_on:
+      - mongo
+    networks:
+      replication_network:
+    ports:
+      - 3000:3000
+      - 9229:9229
+
+volumes:
+  mongo-data:
+    driver: local
+  postgres_data:
+    driver: local
+
+
+
+

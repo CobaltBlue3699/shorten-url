@@ -27,7 +27,7 @@ export class AppController {
     const protocol = this.appConfigService.getProtocol();
     const port = this.appConfigService.getPort();
     let baseURL = `${this.appConfigService.getProtocol()}://${this.appConfigService.getHost()}`;
-    if (![443, 80].some((p) => p === port)) {
+    if (![443, 80].some((p) => p === port) && process.env.NODE_ENV != 'production') {
       baseURL += `:${port}`;
     }
     return {
