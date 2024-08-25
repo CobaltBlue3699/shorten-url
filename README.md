@@ -1,5 +1,11 @@
 # Shorten URL - URL Shortening Service
 
+<p align="center">An url shorten web service written by Nestjs and Angular.</p>
+
+<img src="./docs/overview.png">
+
+[設計思路](./docs/design.md)
+
 <p align="center">
   
 
@@ -11,8 +17,6 @@ https://github.com/user-attachments/assets/18407ccc-e531-4e54-86b5-87fc3794b82a
 
 
 </p>
-
-<p align="center">An url shorten web service written by Nestjs and Angular.</p>
 
 ## Requisites
 - Nodejs(20.14.0+)

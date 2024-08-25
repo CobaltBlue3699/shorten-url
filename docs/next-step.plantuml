@@ -1,0 +1,33 @@
+@startuml next-step
+
+package "URL Shortening Service" {
+  [NestJS App] --> [Kafka cluster] : Consumes keys and handles pub/sub
+  package "NoSQL Database" {
+    [NestJS App] --> [MongoDB] : Stores URL data
+    [NestJS App] --> [MongoDB] : Store/Update IP-Geo data
+  }
+  package "In-memory cache" {
+    [NestJS App] --> [Redis] : Caches short URLs and metadata
+  }
+}
+
+package "Key Generation" {
+  [Key Generator Service] --> [Kafka cluster] : Pushes generated keys
+  [Key Generator Service] --> [MongoDB] : Stores generated keys
+}
+
+cloud "User Interaction" {
+  [User] --> [NestJS App] : Interacts with the service
+}
+
+package "Identity and Access Management" {
+  [Keycloak] --> [PostgreSQL] : Stores user data
+  [NestJS App] --> [Keycloak] : Authenticates via
+}
+
+cloud "External IP Data Source" {
+  [ip data source]
+  [NestJS App] --> [ip data source] : Fetch daily IP-Geo data
+}
+
+@enduml
